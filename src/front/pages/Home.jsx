@@ -32,8 +32,24 @@ export const Home = () => {
 		loadMessage()
 	}, [])
 
+	const styles = {
+	container: {
+		minHeight: "100vh",
+		background: "linear-gradient(135deg, #945f5b, #b8837a)", // Gradiente similar al de la imagen
+		backgroundSize: "cover",
+		backgroundPosition: "center",
+		color: "#fff",
+		padding: "40px",
+		display: "flex",
+		flexDirection: "column",
+		alignItems: "center",
+		justifyContent: "center",
+		textAlign: "center",
+	}
+};
+
 	return (
-		<div className="text-center mt-5">
+		<div style={styles.container}>
 			<h1 className="display-4">Hello Rigo!!</h1>
 			<p className="lead">
 				<img src={rigoImageUrl} className="img-fluid rounded-circle mb-3" alt="Rigo Baby" />
