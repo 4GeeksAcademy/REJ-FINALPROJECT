@@ -426,6 +426,59 @@ def get_appoitment_detail(appointment_id):
                     )
             )
 
+#-----------------------------obtener info de barbero--------------------------------------ok 
+@app.route('/stylist/info', methods=['GET'])
+#@jwt_required()
+def get_stylist_info():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca@gmail"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+    
+    return (jsonify({'msg':'Barbero listado con exito', 
+                     'items': user.serialize()
+                     }
+                    )
+            )
+
+#------------Actualizar Info Barbero---------------------------------------ok
+
+@app.route('/stylist/update_info', methods=['PUT'])
+#@jwt_required()
+def update_stylist_update_info():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca@gmail"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    data = request.get_json()
+    
+    if "email" not in data:
+            return jsonify({"msg": "El Campo e-mail es obligatorio"}), 400
+    else:
+        user.email=data["email"]
+    if "nombre" in data: 
+        user.nombre=data["nombre"]
+    if "telefono" in data: 
+        user.telefono=data["telefono"]
+    if "sexo" in data: 
+        user.sexo=data["sexo"]
+    if "fecha_nacimiento" in data: 
+        user.fecha_nacimiento=data["fecha_nacimiento"]
+    if "role" in data:
+        user.role=data["role"]
+    if "picture" in data:
+        user.picture=data["picture"]
+
+    db.session.commit()
+
+    return jsonify({"msg": "Estado de la cita actualizado correctamente",
+                   "user":user.serialize()}), 200
+
 
 
 # this only runs if `$ python src/main.py` is executed
