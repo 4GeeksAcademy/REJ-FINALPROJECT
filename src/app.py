@@ -479,7 +479,56 @@ def update_stylist_update_info():
     return jsonify({"msg": "Estado de la cita actualizado correctamente",
                    "user":user.serialize()}), 200
 
+#-----------------------Crear una cita con items-------------------------------------- ok
+@app.route('/stylist/appointment_items', methods=['POST'])
+#@jwt_required()
+def create_appointment_items():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca.karen28@gmail.com"
+    user = User.query.filter_by(email=current_user).first()
 
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    data = request.get_json()
+    if "date" not in data:
+        return jsonify({"msg": "la fecha es necesaria para crear la cita"}), 400 
+    
+    if "status" not in  data:
+        return jsonify({"msg": "El estado es necesario para crear la cita"}), 400 
+    
+    if "user_id" not in data: 
+        return jsonify({"msg": "El Usuario es necesari0 para crear la cita"}), 400 
+    
+    if "stylist_id" not in data:
+        return jsonify({"msg": "El estilista es necesario para crear la cita"}), 400
+    if "items" not in data:
+        return jsonify({"msg": "Se deben ingresar los trabajos"}), 400
+
+    appointment = Appointment(
+        date=data["date"],
+        status=data["status"],
+        user_id=data["user_id"],
+        stylist_id=data["stylist_id"]
+    )
+
+    db.session.add(appointment)
+    db.session.commit()
+
+    appointment_id= appointment.id
+    appointment_items_serialized=[]
+
+    for appointment_items_aux in data["items"]:
+        appointment_item = AppointmentList(appointment_id=appointment_id, 
+                                           work_type_id=appointment_items_aux
+                                           )
+        db.session.add(appointment_item)
+        db.session.commit()
+        appointment_items_serialized.append( appointment_item.work_type.serialize())
+    
+    return jsonify({"msg": "Item creado correctamente",
+                    "apointment":appointment.serialize(),
+                    "works":appointment_items_serialized}), 200
 
 # this only runs if `$ python src/main.py` is executed
 if __name__ == '__main__':
