@@ -1,0 +1,16 @@
+.book-button {
+  background-color: #a7706c;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.book-button:hover {
+  background-color: #8e5a54;
+  transform: translateY(-3px);
+}
