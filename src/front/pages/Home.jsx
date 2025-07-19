@@ -17,7 +17,7 @@ const Home = () => {
         </p>
         <button 
           onClick={() => navigate("/appointment")} 
-          className="book-button" // 👈 Aplicamos la clase CSS
+          className="book-button" 
         >
           Contact Us
         </button>
@@ -42,9 +42,9 @@ const containerStyle = {
   justifyContent: "space-between",
   padding: "4rem",
   minHeight: "80vh",
-  background: "linear-gradient(135deg, rgba(246,195,179,0.9) 0%, rgba(167,112,108,0.9) 100%)",
+  background: "linear-gradient(135deg, rgba(197, 142, 126, 0.9) 0%, rgba(102, 63, 61, 0.9) 100%)",
   backgroundRepeat: "no-repeat",
-  backgroundAttachment: "fixed", // Efecto parallax
+  backgroundAttachment: "fixed", 
 };
 
 
