@@ -2,49 +2,50 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import homeImage from "../assets/img/BeautySalon.jpg";
 import "./Home.css";
+import Date_Picker from "../components/DatePicker"
+import DatePicker from "react-datepicker";
 
-
-const Home = () => {
+const Home_Stylist = () => {
   const navigate = useNavigate();
 
   return (
-    <div style={containerStyle}>
+    <div className="" style={containerStyle}>
       
-      <div style={textSectionStyle}>
-        <h1 style={titleStyle}>Beauty And Style</h1>
-        <p style={paragraphStyle}>
-          "Vive, Vive! Cartago Vive!"
-        </p>
-        <button 
-          onClick={() => navigate("/appointment")} 
-          className="book-button" 
-        >
-          Contact Us
-        </button>
+      <div className="row align-items-center">
+        <div className="col-4 border align-items-center">
+            <Date_Picker />
+        </div>
+        <div className="col-8 border">
+          
+        </div>
       </div>
+      <div className="row align-items-start">
+        <div className="col-3">
+            
+        </div>
+        <div className="col-3">
+          
+        </div>
+         <div className="col-6">
+          
+        </div>
+      </div>
+      
+      
 
-     
-      <div style={imageSectionStyle}>
-        <img 
-          src={homeImage} 
-          alt="Salón de belleza profesional" 
-          style={imageStyle}
-        />
-      </div>
     </div>
   );
 };
 
 
 const containerStyle = {
-  display: "flex",
   alignItems: "center",
   justifyContent: "space-between",
   padding: "4rem",
   minHeight: "80vh",
   background: "linear-gradient(135deg, rgba(197, 142, 126, 0.9) 0%, rgba(102, 63, 61, 0.9) 100%)",
   backgroundRepeat: "no-repeat",
-  backgroundAttachment: "fixed", 
+  backgroundAttachment: "fixed"
 };
 
 
@@ -81,4 +82,4 @@ const imageStyle = {
   boxShadow: "0 15px 30px rgba(0,0,0,0.1)",
 };
 
-export default Home;
+export default Home_Stylist;

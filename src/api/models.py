@@ -58,6 +58,9 @@ class User(db.Model):
             "role": self.role.value,
             "picture": self.picture
         }
+    
+    def __str__(self):
+        return f'{self.nombre}'
 
 # WorkType (Servicios)
 class WorkType(db.Model):
@@ -76,6 +79,9 @@ class WorkType(db.Model):
             "duration": self.duration,
             "cost": self.cost
         }
+    
+    def __str__(self):
+        return f'{self.description}'
 
 # Appointments (Citas)
 class Appointment(db.Model):
@@ -89,7 +95,7 @@ class Appointment(db.Model):
     review_description: Mapped[str] = mapped_column(Text, nullable=True)
 
     user = relationship("User", back_populates="appointments", foreign_keys=[user_id])
-    stylist = relationship("User", back_populates="assigned_appointments", foreign_keys=[stylist_id])
+    stylist= relationship("User", back_populates="assigned_appointments", foreign_keys=[stylist_id])
     items = relationship("AppointmentList", back_populates="appointment")
 
     def serialize(self):
@@ -100,8 +106,13 @@ class Appointment(db.Model):
             "user_id": self.user_id,
             "stylist_id": self.stylist_id,
             "review": self.review,
-            "review_description": self.review_description
+            "review_description": self.review_description,
+            "user":self.user.nombre
         }
+    
+    def __str__(self):
+        return  f'Cita para {self.user.nombre } el {self.date}'
+
 
 # AppointmentList (Detalle de servicios en una cita)
 class AppointmentList(db.Model):
@@ -121,3 +132,5 @@ class AppointmentList(db.Model):
             "work_type_id": self.work_type_id,
             "picture": self.picture
         }
+    def __str__(self):
+        return f'{self.work_type.description}'

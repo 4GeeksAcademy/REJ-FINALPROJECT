@@ -6,9 +6,11 @@ import {
     Route,
 } from "react-router-dom";
 import { Layout } from "./pages/Layout";
-import { Home } from "./pages/Home";
+import  Home  from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
+import  Home_Stylist  from "./pages/Home_Stylist";
+
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -25,6 +27,7 @@ export const router = createBrowserRouter(
         <Route path= "/" element={<Home />} />
         <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
         <Route path="/demo" element={<Demo />} />
+        <Route path="/Home_Stylist" element={<Home_Stylist />} />
       </Route>
     )
 );
