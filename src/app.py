@@ -12,6 +12,11 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_jwt_extended import jwt_required, get_jwt_identity
 from api.models import db, User, Appointment, AppointmentList, WorkType
+from flask_cors import CORS
+
+
+
+
 
 # from models import Person
 
@@ -20,6 +25,7 @@ static_file_dir = os.path.join(os.path.dirname(
     os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+CORS(app)
 
 # database condiguration
 db_url = os.getenv("DATABASE_URL")
@@ -270,7 +276,7 @@ def get_reports():
 #@jwt_required()
 def get_pending_appoitments():
     #current_user = get_jwt_identity()
-    current_user = "fonseca@gmail"
+    current_user = "fonseca.karen28@gmail.com"
     user = User.query.filter_by(email=current_user).first()
 
     if user is None:
@@ -282,7 +288,8 @@ def get_pending_appoitments():
     for appointments_aux in appointments:
         appointments_serialized.append( appointments_aux.serialize())
     
-    return appointments_serialized
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
 
 # Obtener todos los servicios completados ok
 @app.route('/stylist/done_appoitments', methods=['GET'])
@@ -301,7 +308,9 @@ def get_done_appoitments():
     for appointments_aux in appointments:
         appointments_serialized.append( appointments_aux.serialize())
     
-    return appointments_serialized
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
+
 
 
 #------------Actualizar estado de cita---------------------------------------ok
@@ -408,7 +417,7 @@ def create_appointment_item():
 #@jwt_required()
 def get_appoitment_detail(appointment_id):
     #current_user = get_jwt_identity()
-    current_user = "fonseca@gmail"
+    current_user = "fonseca.karen28@gmail.com"
     user = User.query.filter_by(email=current_user).first()
 
     if user is None:
