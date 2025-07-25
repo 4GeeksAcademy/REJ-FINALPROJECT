@@ -14,3 +14,21 @@
   background-color: #8e5a54;
   transform: translateY(-3px);
 }
+
+.scroll {
+  height: 20rem;
+  line-height: 1em;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 100%;
+  border: 1px solid;
+}
+.columnTitleStyle {
+  font-Size: 1.5rem;
+  font-Weight: Normal;
+  letter-Spacing: 1px;
+  margin-Bottom: 1rem;
+  border-Bottom: 1px solid rgba(255,255,255,0.2);
+  color:antiquewhite;
+  padding-Bottom: 0.5rem
+}

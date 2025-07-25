@@ -130,6 +130,9 @@ class AppointmentList(db.Model):
             "id": self.id,
             "appointment_id": self.appointment_id,
             "work_type_id": self.work_type_id,
+            "work_description": self.work_type.description,
+            "work_cost": self.work_type.cost,
+            "work_duration": self.work_type.duration,
             "picture": self.picture
         }
     def __str__(self):
