@@ -85,7 +85,8 @@ class Appointment(db.Model):
 
     user = relationship("User", back_populates="appointments", foreign_keys=[user_id])
     stylist= relationship("User", back_populates="assigned_appointments", foreign_keys=[stylist_id])
-    items = relationship("AppointmentList", back_populates="appointment")
+    #items = relationship("AppointmentList", back_populates="appointment")
+    items:Mapped[list['AppointmentList']]=relationship(back_populates='appointment')
 
     def serialize(self):
         return {
@@ -96,7 +97,9 @@ class Appointment(db.Model):
             "stylist_id": self.stylist_id,
             "review": self.review,
             "review_description": self.review_description,
-            "user":self.user.nombre
+            "user":self.user.nombre,
+            "user_objeto":self.user.serialize(),
+            "items":[item.serialize() for item in self.items]
         }
     
     def __str__(self):
@@ -124,5 +127,6 @@ class AppointmentList(db.Model):
             "work_duration": self.work_type.duration,
             "picture": self.picture
         }
+    
     def __str__(self):
         return f'{self.work_type.description}'
