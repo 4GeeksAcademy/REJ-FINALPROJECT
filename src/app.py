@@ -120,7 +120,7 @@ def create_service():
     db.session.add(new_service)
     db.session.commit()
     return jsonify({"msg": "Servicio creado correctamente"}), 201
-
+       
 @app.route('/admin/services/<int:service_id>', methods=['PUT'])
 @jwt_required()
 def update_service(service_id):
