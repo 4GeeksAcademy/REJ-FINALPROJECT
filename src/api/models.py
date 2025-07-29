@@ -1,11 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Boolean, Enum, ForeignKey, Text
+from sqlalchemy import String, Boolean, Enum, ForeignKey, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
+from flask_bcrypt import Bcrypt
 import enum
 
 
 db = SQLAlchemy()
+bcrypt = Bcrypt()
+
 
 # Enums
 class RoleEnum(enum.Enum):
@@ -35,6 +38,14 @@ class User(db.Model):
     # Relaciones
     appointments = relationship("Appointment", back_populates="user", foreign_keys="Appointment.user_id")
     assigned_appointments = relationship("Appointment", back_populates="stylist", foreign_keys="Appointment.stylist_id")
+
+    # Método para establecer contraseña hasheada
+    def set_password(self, password_plaintext):
+        self.password = bcrypt.generate_password_hash(password_plaintext).decode('utf-8')
+
+    # Método para verificar contraseña
+    def check_password(self, password_plaintext):
+        return bcrypt.check_password_hash(self.password, password_plaintext)
 
     def serialize(self):
         return {
