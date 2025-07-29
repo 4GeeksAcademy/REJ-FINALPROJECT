@@ -92,8 +92,8 @@ const estilos = {
 },
 
   card: {
-  width: "100%", // ocupa el espacio disponible del grid
-  maxWidth: "280px", // no más de 280px de ancho
+  width: "100%", 
+  maxWidth: "280px", 
   padding: "1rem",
   backgroundColor: "rgba(161, 98, 93, 0.21)",
   borderRadius: "12px",

@@ -28,13 +28,13 @@
 }
 
 .card-corte {
-  flex: 1 1 calc(25% - 2rem); /* 4 por fila en escritorio */
+  flex: 1 1 calc(25% - 2rem); 
   max-width: calc(25% - 2rem);
 }
 
 @media (max-width: 768px) {
   .card-corte {
-    flex: 1 1 calc(50% - 2rem); /* 2 por fila en móviles */
+    flex: 1 1 calc(50% - 2rem); 
     max-width: calc(50% - 2rem);
   }
 }
