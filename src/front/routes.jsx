@@ -9,11 +9,8 @@ import { Layout } from "./pages/Layout";
 import  Home  from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
-<<<<<<< HEAD
 import  Services  from "./pages/Services"; 
-=======
 import  Home_Stylist  from "./pages/Home_Stylist";
->>>>>>> ef645512b3171aafa31dec32ec6fe977d842e92f
 
 
 export const router = createBrowserRouter(
