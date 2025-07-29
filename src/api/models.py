@@ -1,11 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import String, Boolean, Enum, ForeignKey, Text
+from sqlalchemy import String, Boolean, Enum, ForeignKey, Text, func
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
+from flask_bcrypt import Bcrypt
 import enum
 
 
 db = SQLAlchemy()
+bcrypt = Bcrypt()
+
 
 # Enums
 class RoleEnum(enum.Enum):
@@ -36,6 +39,14 @@ class User(db.Model):
     appointments = relationship("Appointment", back_populates="user", foreign_keys="Appointment.user_id")
     assigned_appointments = relationship("Appointment", back_populates="stylist", foreign_keys="Appointment.stylist_id")
 
+    # Método para establecer contraseña hasheada
+    def set_password(self, password_plaintext):
+        self.password = bcrypt.generate_password_hash(password_plaintext).decode('utf-8')
+
+    # Método para verificar contraseña
+    def check_password(self, password_plaintext):
+        return bcrypt.check_password_hash(self.password, password_plaintext)
+
     def serialize(self):
         return {
             "id": self.id,
@@ -47,6 +58,9 @@ class User(db.Model):
             "role": self.role.value,
             "picture": self.picture
         }
+    
+    def __str__(self):
+        return f'{self.nombre}'
 
 # WorkType (Servicios)
 class WorkType(db.Model):
@@ -65,6 +79,9 @@ class WorkType(db.Model):
             "duration": self.duration,
             "cost": self.cost
         }
+    
+    def __str__(self):
+        return f'{self.description}'
 
 # Appointments (Citas)
 class Appointment(db.Model):
@@ -78,7 +95,7 @@ class Appointment(db.Model):
     review_description: Mapped[str] = mapped_column(Text, nullable=True)
 
     user = relationship("User", back_populates="appointments", foreign_keys=[user_id])
-    stylist = relationship("User", back_populates="assigned_appointments", foreign_keys=[stylist_id])
+    stylist= relationship("User", back_populates="assigned_appointments", foreign_keys=[stylist_id])
     items = relationship("AppointmentList", back_populates="appointment")
 
     def serialize(self):
@@ -89,8 +106,13 @@ class Appointment(db.Model):
             "user_id": self.user_id,
             "stylist_id": self.stylist_id,
             "review": self.review,
-            "review_description": self.review_description
+            "review_description": self.review_description,
+            "user":self.user.nombre
         }
+    
+    def __str__(self):
+        return  f'Cita para {self.user.nombre } el {self.date}'
+
 
 # AppointmentList (Detalle de servicios en una cita)
 class AppointmentList(db.Model):
@@ -108,5 +130,10 @@ class AppointmentList(db.Model):
             "id": self.id,
             "appointment_id": self.appointment_id,
             "work_type_id": self.work_type_id,
+            "work_description": self.work_type.description,
+            "work_cost": self.work_type.cost,
+            "work_duration": self.work_type.duration,
             "picture": self.picture
         }
+    def __str__(self):
+        return f'{self.work_type.description}'
