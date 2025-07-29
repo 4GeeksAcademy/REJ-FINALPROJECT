@@ -8,7 +8,7 @@ const User_Card = ({user, index}) => {
 
 <div className="card bg-danger-subtle" style={{height:"20rem"}}>
   <div className="m-1">
-      <img src={user.picture} className="card-img-top text-center" alt="..." style={{height:"45%", width:"60%"}}/>
+      <img src={user.picture} className="card-img-top text-center img-square" alt="..." style={{height:"45%", width:"60%"}}/>
     
     <p className="card-title text-center"><b>{user.nombre}</b></p>
     <p className="card-text m-1 ">Sex:        {user.sexo}</p>

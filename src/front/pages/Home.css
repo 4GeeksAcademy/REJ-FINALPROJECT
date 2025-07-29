@@ -32,3 +32,8 @@
   color:antiquewhite;
   padding-Bottom: 0.5rem
 }
+.img-square {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+  }

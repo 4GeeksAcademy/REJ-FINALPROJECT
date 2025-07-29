@@ -123,7 +123,7 @@ const Home_Stylist = () => {
           </div> 
         </div>
       </div>
-      <div className="row text-center">
+      <div className="row text-center" style ={{ height:"50%"}}>
         <div className="col-3">
             <h2 className="columnTitleStyle">Scheduled Works</h2>
             <div className="border m-1 p-2 scroll" >
@@ -149,8 +149,8 @@ const Home_Stylist = () => {
         </div>
         <div className="col-6">
             <h2 className="columnTitleStyle">User History</h2>
-            <div className="bg-danger-subtle row">
-                <div className="col-3">
+            <div className="bg-danger-subtle row ">
+                <div className="col-3 pt-1">
                   {doneAppointments.map((doneAppointment, index, array) => {
                       return (
                         <button type="button" className="btn btn-light" onClick={() => setDoneItems(doneAppointment.items)}>{doneAppointment.date}</button>
@@ -158,7 +158,7 @@ const Home_Stylist = () => {
                     })
                   }
                   </div>
-                <div className="col-9">
+                <div className="col-9 pt-1">
                      <Carousel doneItems={doneItems} />
                 </div>
             </div>
