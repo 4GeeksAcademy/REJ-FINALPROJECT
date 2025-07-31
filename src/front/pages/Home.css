@@ -32,3 +32,25 @@
   color:antiquewhite;
   padding-Bottom: 0.5rem
 }
+.img-square {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+  }
+
+  .boton {
+    background-color: #5a4a42;
+    color: #fff;
+    padding: 0.5rem 0.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .boton:hover {
+    background-color: #534740;
+    color: #fff;
+    padding: 0.5rem 0.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }

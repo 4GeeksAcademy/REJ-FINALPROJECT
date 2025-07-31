@@ -9,8 +9,12 @@ import { Layout } from "./pages/Layout";
 import  Home  from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
+import  Gallery  from "./pages/Gallery";
 import  Services  from "./pages/Services"; 
 import  Home_Stylist  from "./pages/Home_Stylist";
+
+
+
 
 
 export const router = createBrowserRouter(
@@ -28,8 +32,12 @@ export const router = createBrowserRouter(
         <Route path= "/" element={<Home />} />
         <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
         <Route path="/demo" element={<Demo />} />
+
         <Route path="/services" element={<Services />} /> {/* Folder for Services page */}
         <Route path="/Home_Stylist" element={<Home_Stylist />} />
+        <Route path="/gallery" element={<Gallery />} /> 
+  
+
       </Route>
     )
 );
