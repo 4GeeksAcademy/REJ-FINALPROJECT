@@ -1,0 +1,56 @@
+.book-button {
+  background-color: #a7706c;
+  color: white;
+  border: none;
+  padding: 12px 30px;
+  border-radius: 30px;
+  font-size: 1rem;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+.book-button:hover {
+  background-color: #8e5a54;
+  transform: translateY(-3px);
+}
+
+.scroll {
+  height: 20rem;
+  line-height: 1em;
+  overflow-x: hidden;
+  overflow-y: scroll;
+  width: 100%;
+  border: 1px solid;
+}
+.columnTitleStyle {
+  font-Size: 1.5rem;
+  font-Weight: Normal;
+  letter-Spacing: 1px;
+  margin-Bottom: 1rem;
+  border-Bottom: 1px solid rgba(255,255,255,0.2);
+  color:antiquewhite;
+  padding-Bottom: 0.5rem
+}
+.img-square {
+    width: 100%;
+    aspect-ratio: 1/1;
+    object-fit: cover;
+  }
+
+  .boton {
+    background-color: #5a4a42;
+    color: #fff;
+    padding: 0.5rem 0.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
+  .boton:hover {
+    background-color: #534740;
+    color: #fff;
+    padding: 0.5rem 0.5rem;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+  }
