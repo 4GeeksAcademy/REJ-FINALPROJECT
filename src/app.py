@@ -13,6 +13,7 @@ from api.utils import APIException, generate_sitemap
 from api.models import db, WorkType, User, RoleEnum, Appointment, AppointmentList 
 from api.admin import setup_admin
 from api.commands import setup_commands
+from flask_cors import CORS
 
 
 # Inicialización de la app
@@ -534,7 +535,7 @@ def update_stylist_appointment_status(appointment_id):
 #-----------------------Crear una cita--------------------------------------- ok
 @app.route('/stylist/appointment', methods=['POST'])
 #@jwt_required()
-def create_appointment():
+def create_appointment_Stylist():
     #current_user = get_jwt_identity()
     current_user = "fonseca@gmail"
     user = User.query.filter_by(email=current_user).first()
