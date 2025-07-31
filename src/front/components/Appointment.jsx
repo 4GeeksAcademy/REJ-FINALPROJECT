@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import Edit_Appointment from "../components/Edit_Appointment"
 import Modal from 'react-modal';
-
+//<Edit_Appointment appointment={appointment} editAppointment={editAppointment} isOpen={modalIsOpen} />
 
 const Appointment = ({ appointment, viewAppointment, editAppointment, setModalIsOpen, modalIsOpen, index }) => {
 
