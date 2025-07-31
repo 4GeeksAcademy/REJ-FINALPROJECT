@@ -96,9 +96,9 @@
   /* Fondo igual al fondo de la página */
   background: linear-gradient(
   to bottom right, 
-  rgba(246, 195, 179, 0.6),  /* #f6c3b3 con 60% opacity */
-  rgba(167, 112, 108, 0.6)   /* #a7706c con 60% opacity */
-);
+  rgba(246, 195, 179, 0.6),
+  rgba(167, 112, 108, 0.6)   );
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 10px;
   display: flex;
   align-items: center;
   justify-content: center;
