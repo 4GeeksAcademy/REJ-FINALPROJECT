@@ -16,6 +16,7 @@ import  Home_Stylist  from "./pages/Home_Stylist";
 
 
 
+
 export const router = createBrowserRouter(
     createRoutesFromElements(
     // CreateRoutesFromElements function allows you to build route elements declaratively.
@@ -34,7 +35,7 @@ export const router = createBrowserRouter(
 
         <Route path="/services" element={<Services />} /> {/* Folder for Services page */}
         <Route path="/Home_Stylist" element={<Home_Stylist />} />
-
+  
 
       </Route>
     )
