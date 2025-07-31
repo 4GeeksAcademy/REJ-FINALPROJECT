@@ -50,7 +50,7 @@ const Gallery = () => {
 
   return (
     <div className="gallery-container">
-      <h1 className="gallery-title">Our Work</h1>
+      <h1 className="gallery-title">Gallery</h1>
       <div className="gallery-grid">
         {works.map((work) => (
           <div key={work.id} className="gallery-card" onClick={() => openModal(work)}>
