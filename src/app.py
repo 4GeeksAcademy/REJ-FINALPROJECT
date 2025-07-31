@@ -566,7 +566,6 @@ def update_stylist_appointment_status(appointment_id):
 @app.route('/stylist/appointment', methods=['POST'])
 #@jwt_required()
 def create_appointment_Stylist():
-def create_appointment_stylist():
     #current_user = get_jwt_identity()
     current_user = "fonseca@gmail"
     user = User.query.filter_by(email=current_user).first()
