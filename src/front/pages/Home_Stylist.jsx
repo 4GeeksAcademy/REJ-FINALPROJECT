@@ -17,6 +17,7 @@ const Home_Stylist = () => {
   const [doneItems, setDoneItems] = useState([]);
   const [workList, setWorkList] = useState([]);
   const [user, setUser] = useState([]);
+  const [modalIsOpen, setModalIsOpen] = useState(false);
   let duration=0;
   let cost=0;
 
@@ -93,9 +94,33 @@ const Home_Stylist = () => {
 		
 	}
 
+  function editAppointment(indice,user_objeto) {
+    setUser(user_objeto);
+    console.log(user_objeto);
+    getDoneAppointments(user_objeto.id);
+
+    fetch("https://glorious-space-spork-pjwx47757q4936gjw-3001.app.github.dev/stylist/appoitment_detail/"+indice)
+		.then((response)=>{
+		  console.log(response);
+			if(response.ok==false){
+				throw new Error ('Error al consultar Las Citas');
+			}
+		  return response.json();
+		})
+		.then((data)=>{
+			setWorkList(data.items);
+			console.log("items:",workList);
+		})
+		.catch((error)=>{
+			alert(error)
+		})
+		
+	}
+
+
  useEffect(()=>{
     getAppointments();
-	},[selectedDate,workList,user,doneAppointments,doneItems])
+	},[selectedDate,workList,user,doneAppointments,doneItems, modalIsOpen])
 
 
 
@@ -115,7 +140,7 @@ const Home_Stylist = () => {
               <div className="list-group">
                 {appointments.map((appointment, index, array) => {
                   return (
-                    <Appointment Appointment={appointment} viewAppointment={viewAppointment} key={index} index={appointment.id}/>
+                    <Appointment appointment={appointment} viewAppointment={viewAppointment} editAppointment={editAppointment} setModalIsOpen={setModalIsOpen} modalIsOpen={modalIsOpen} key={index} index={appointment.id}/>
                     )
                   })
                 }
@@ -153,7 +178,7 @@ const Home_Stylist = () => {
                 <div className="col-3 pt-1">
                   {doneAppointments.map((doneAppointment, index, array) => {
                       return (
-                        <button type="button" className="btn btn-light" onClick={() => setDoneItems(doneAppointment.items)}>{doneAppointment.date}</button>
+                        <button type="button" className="btn boton" onClick={() => setDoneItems(doneAppointment.items)}>{doneAppointment.date}</button>
                       )
                     })
                   }
