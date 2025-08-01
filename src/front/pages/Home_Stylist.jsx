@@ -17,7 +17,7 @@ const Home_Stylist = () => {
   const [doneItems, setDoneItems] = useState([]);
   const [workList, setWorkList] = useState([]);
   const [user, setUser] = useState([]);
-  const [modalIsOpen, setModalIsOpen] = useState(false);
+  
   let duration=0;
   let cost=0;
 
@@ -114,18 +114,20 @@ const Home_Stylist = () => {
 		.catch((error)=>{
 			alert(error)
 		})
+    
+
 		
 	}
 
 
  useEffect(()=>{
     getAppointments();
-	},[selectedDate,workList,user,doneAppointments,doneItems, modalIsOpen])
+	},[selectedDate,workList,user,doneAppointments,doneItems])
 
 
 
   return (
-    <div className="" style={containerStyle}>
+    <div className="containerStyle">
       
       <div className="row text-center" style ={{ height:"50%"}}>
         <div className="col-4 ">
@@ -140,7 +142,7 @@ const Home_Stylist = () => {
               <div className="list-group">
                 {appointments.map((appointment, index, array) => {
                   return (
-                    <Appointment appointment={appointment} viewAppointment={viewAppointment} editAppointment={editAppointment} setModalIsOpen={setModalIsOpen} modalIsOpen={modalIsOpen} key={index} index={appointment.id}/>
+                    <Appointment appointment={appointment} viewAppointment={viewAppointment} editAppointment={editAppointment} key={index} index={appointment.id}/>
                     )
                   })
                 }
@@ -151,7 +153,7 @@ const Home_Stylist = () => {
       <div className="row text-center" style ={{ height:"50%"}}>
         <div className="col-3">
             <h2 className="columnTitleStyle">Scheduled Works</h2>
-            <div className="border m-1 p-2 scroll" >
+            <div className="m-1 p-2 card" style={{height:"20rem"}}>
               <div className="list-group">
                 {
                   workList.map((work, index, array) => {
@@ -163,7 +165,6 @@ const Home_Stylist = () => {
                   })
                 }
               </div>
-                <br/>
                 <p>Estimated Duration: {duration} min</p>
                 <p>Total Cost: ${cost}</p>
           </div> 
@@ -174,7 +175,7 @@ const Home_Stylist = () => {
         </div>
         <div className="col-6">
             <h2 className="columnTitleStyle">User History</h2>
-            <div className="bg-danger-subtle row ">
+            <div className="bg-danger-subtle row">
                 <div className="col-3 pt-1">
                   {doneAppointments.map((doneAppointment, index, array) => {
                       return (
@@ -196,17 +197,6 @@ const Home_Stylist = () => {
 
     </div>
   );
-};
-
-
-const containerStyle = {
-  
-  alignItems: "center",
-  justifyContent: "space-between",
-  padding: "4rem",
-  background: "linear-gradient(135deg, rgba(197, 142, 126, 0.9) 0%, rgba(102, 63, 61, 0.9) 100%)",
-  backgroundRepeat: "no-repeat",
-  backgroundAttachment: "fixed"
 };
 
 

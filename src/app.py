@@ -306,10 +306,12 @@ def login():
 
 # 3. Obtener perfil
 @app.route('/profile', methods=['GET'])
-@jwt_required()
+#@jwt_required()
 def get_profile():
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    #user_id = get_jwt_identity()
+    user_id = "elkin_rondon@hotmail.com"
+    #user = User.query.get(user_id)
+    user = User.query.filter_by(email=user_id).first()
     if not user:
         return jsonify({'msg': 'Usuario no encontrado'}), 404
     return jsonify({
@@ -436,7 +438,7 @@ def get_catalog():
 
 # 10. Dejar reseña
 @app.route('/review', methods=['POST'])
-@jwt_required()
+#@jwt_required()
 def leave_review():
     body = request.get_json()
     if 'appointment_id' not in body:
@@ -447,8 +449,8 @@ def leave_review():
         return jsonify({'msg': 'El campo review_description es obligatorio'}), 400
 
     appointment = Appointment.query.get(body['appointment_id'])
-    if not appointment or appointment.user_id != get_jwt_identity():
-        return jsonify({'msg': 'No autorizado o cita no válida'}), 403
+    #if not appointment or appointment.user_id != get_jwt_identity():
+    #    return jsonify({'msg': 'No autorizado o cita no válida'}), 403
 
     appointment.review = body['review']
     appointment.review_description = body['review_description']
@@ -555,6 +557,7 @@ def update_stylist_appointment_status(appointment_id):
 
     appointment.status = data["status"]
     db.session.commit()
+
 
     return jsonify({"msg": "Estado de la cita actualizado correctamente",
                    "role":appointment.serialize()}), 200
@@ -756,8 +759,49 @@ def create_appointment_items():
                     "apointment":appointment.serialize(),
                     "works":appointment_items_serialized}), 200
 
+#--------------------EndPoints de Usuario-----------------------------------
+
+@app.route('/user/pending_appointments', methods=['GET'])
+#@jwt_required()
+def get_user_pending_appointments():
+    #current_user = get_jwt_identity()
+    current_user = "elkin_rondon@hotmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    appointments=Appointment.query.filter_by(user_id=user.id, status='pendiente')
+    appointments_serialized=[]
+    
+    for appointments_aux in appointments:
+        appointments_serialized.append( appointments_aux.serialize())
+    
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
+
+@app.route('/user/done_appointments', methods=['GET'])
+#@jwt_required()
+def get_user_done_appointments():
+    #current_user = get_jwt_identity()
+    current_user = "elkin_rondon@hotmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    appointments=Appointment.query.filter_by(user_id=user.id, status='completada')
+    appointments_serialized=[]
+    
+    for appointments_aux in appointments:
+        appointments_serialized.append( appointments_aux.serialize())
+    
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
+
 # this only runs if `$ python src/main.py` is executed
 
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
     app.run(host='0.0.0.0', port=PORT, debug=True)
+

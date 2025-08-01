@@ -5,7 +5,7 @@ const Carousel = ({doneItems}) => {
     let contador_item = 0;
     console.log(doneItems);
     return (
-        <div id="carouselExampleDark" className="carousel carousel-dark slide" style={{height:"20rem"}}>
+        <div id="carouselExampleDark" className="carousel carousel-dark slide " style={{height:"18rem"}}>
             <div className="carousel-indicators">
                 {doneItems.map((item, index, array) => {
                     contador_indicadores = contador_indicadores+1;
@@ -26,20 +26,18 @@ const Carousel = ({doneItems}) => {
                     if (contador_item == 1) {
                         return (
                             <div className="carousel-item active" data-bs-interval="10000">
-                                <img src={item.picture} className="d-block w-100 img-square" alt="..." style={{height:"18rem"}}/>
+                                <img src={item.picture} className="d-block w-100 img-square rounded-5" alt="..." style={{height:"18rem"}}/>
                                 <div className="carousel-caption d-none d-md-block">
-                                    <h5>{item.work_description}</h5>
-                                    <p>Some representative placeholder content for the first slide.</p>
+                                    <h5><b>{item.work_description}</b></h5>
                                 </div>
                             </div>
                         )
                     } else {
                         return (
                             <div className="carousel-item" data-bs-interval="2000">
-                                <img src={item.picture} className="d-block w-100 img-square" alt="..." style={{height:"18rem"}}/>
+                                <img src={item.picture} className="d-block w-100 img-square rounded-5" alt="..." style={{height:"18rem"}}/>
                                 <div className="carousel-caption d-none d-md-block">
-                                    <h5>{item.work_description}</h5>
-                                    <p>Some representative placeholder content for the second slide.</p>
+                                    <h5><b>{item.work_description}</b></h5>
                                 </div>
                             </div>
                         )
