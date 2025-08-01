@@ -109,6 +109,7 @@ class Appointment(db.Model):
             "review": self.review,
             "review_description": self.review_description,
             "user":self.user.nombre,
+            "stylist":self.stylist.nombre,
             "user_objeto":self.user.serialize(),
             "items":[item.serialize() for item in self.items]
         }
