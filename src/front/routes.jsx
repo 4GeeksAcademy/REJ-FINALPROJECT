@@ -9,7 +9,7 @@ import { Layout } from "./pages/Layout";
 import  Home  from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
-
+import  Gallery  from "./pages/Gallery";
 import  Services  from "./pages/Services"; 
 import  Home_Stylist  from "./pages/Home_Stylist";
 import  Home_User  from "./pages/Home_User";
@@ -37,6 +37,8 @@ export const router = createBrowserRouter(
         <Route path="/services" element={<Services />} /> {/* Folder for Services page */}
         <Route path="/Home_Stylist" element={<Home_Stylist />} />
         <Route path="/Home_User" element={<Home_User />} />
+        <Route path="/gallery" element={<Gallery />} /> 
+
   
 
       </Route>
