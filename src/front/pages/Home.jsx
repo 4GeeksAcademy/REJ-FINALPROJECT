@@ -16,7 +16,7 @@ const Home = () => {
           "Vive, Vive! Cartago Vive!"
         </p>
         <button 
-          onClick={() => navigate("/appointment")} 
+          onClick={() => navigate("/Contact")} 
           className="book-button" 
         >
           Contact Us
