@@ -17,21 +17,22 @@
   font-family: 'Playfair Display', serif;
 }
 
-/* Contenedor de carrusel */
 .carousel-container {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 1.5rem;
+  gap: 2rem; /* Aumentado de 1.5rem */
   position: relative;
   max-width: 90%;
   flex-wrap: nowrap;
+  overflow: hidden;
+  max-width: 90%;
 }
 
-/* Cartas redondas */
+/* Tamaño aumentado de las cartas */
 .carousel-card {
-  width: 180px;
-  height: 180px;
+  width: 280px; /* Aumentado de 180px */
+  height: 300px; /* Aumentado de 180px */
   border-radius: 50%;
   perspective: 1000px;
   cursor: pointer;
@@ -39,12 +40,7 @@
   flex: 0 0 auto;
 }
 
-.carousel-card.center {
-  transform: scale(1.2);
-  z-index: 2;
-}
-
-/* Flip */
+/* Resto del CSS permanece igual */
 .card-inner {
   position: relative;
   width: 100%;
@@ -74,6 +70,7 @@
   height: 100%;
   object-fit: cover;
   border-radius: 50%;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
 }
 
 .card-back {
@@ -84,12 +81,11 @@
   justify-content: center;
   align-items: center;
   font-family: 'Playfair Display', serif;
-  font-size: 1rem;
+  font-size: 1.1rem; /* Aumentado ligeramente */
   text-align: center;
   padding: 0.5rem;
 }
 
-/* Flechas ocultas por defecto */
 .carousel-arrow {
   font-size: 2.5rem;
   color: #5a4a42;
@@ -121,15 +117,16 @@
   margin-left: 1rem;
 }
 
-/* Responsive */
 @media (max-width: 768px) {
-  .carousel-container {
+  .carousel-card {
+    width: 90vw;
+    height: 250px;
     overflow-x: auto;
     justify-content: flex-start;
   }
 
   .carousel-card {
-    width: 150px;
-    height: 150px;
+    width: 200px; /* Aumentado de 150px */
+    height: 200px; /* Aumentado de 150px */
   }
 }

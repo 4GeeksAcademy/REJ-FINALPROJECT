@@ -1,14 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./Gallery.css";
+import { MdContentCut } from "react-icons/md";
+
+// Importar imágenes locales
+import barber from "../assets/img/barber.jpg";
+import face from "../assets/img/face.jpg";
+import mancut from "../assets/img/mancut.jpg";
+import menCut from "../assets/img/menCut.jpg";
+import nail from "../assets/img/nail.jpg";
+import women from "../assets/img/women.jpg";
 
 const images = [
-  { src: "https://images.unsplash.com/photo-1632345031435-8727f6897d53?q=80", text: "Corte clásico" },
-  { src: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80", text: "Diseño moderno" },
-  { src: "https://images.unsplash.com/photo-1700760934268-8aa0ef52ce0a?q=80", text: "Afeitado profesional" },
-  { src: "https://plus.unsplash.com/premium_photo-1661493935776-a76a3e33dddf?q=80", text: "Estilo degradado" },
-  { src: "https://images.unsplash.com/photo-1568339434343-2a640a1a9946?q=80", text: "Corte juvenil" },
-  { src: "https://images.unsplash.com/photo-1593702288056-7927b442d0fa?q=80", text: "Peinado elegante" },
+  { src: mancut, text: "Classic Man Cut" },
+  { src: menCut, text: "Modern Design" },
+  { src: barber, text: "Professional Shave" },
+  { src: nail, text: "Nail Design" },
+  { src: women, text: "Women Cut" },
+  { src: face, text: "Face Massage" }
 ];
 
 const Gallery = () => {
@@ -29,14 +38,12 @@ const Gallery = () => {
     setFlippedIndex(index === flippedIndex ? null : index);
   };
 
-  // Cierra la carta si clicas fuera
   useEffect(() => {
     const handleClickOutside = () => setFlippedIndex(null);
     document.addEventListener("click", handleClickOutside);
     return () => document.removeEventListener("click", handleClickOutside);
   }, []);
 
-  // Evita que al hacer clic en la carta se cierre inmediatamente
   const handleCardClick = (e, index) => {
     e.stopPropagation();
     handleFlip(index);
@@ -83,5 +90,16 @@ const Gallery = () => {
     </div>
   );
 };
+<div style={{
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  justifyContent: "center",
+  padding: "3rem 1rem",
+  minHeight: "100vh"
+}}>
+  <Gallery />
+</div>
+
 
 export default Gallery;
