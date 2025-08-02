@@ -1,134 +1,135 @@
-.gallery-container {
+.carousel-wrapper {
+  position: relative;
+  width: 100%;
   padding: 4rem 2rem;
   background: linear-gradient(to bottom right, #f6c3b3, #a7706c);
   min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 
 .gallery-title {
   text-align: center;
   color: #5a4a42;
-  font-size: 2.8rem;
-  margin-bottom: 3rem;
+  font-size: 2.5rem;
+  margin-bottom: 2.5rem;
   font-family: 'Playfair Display', serif;
 }
 
-.gallery-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* 3 columnas en pantallas grandes */
-  gap: 2rem;
+/* Contenedor de carrusel */
+.carousel-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1.5rem;
+  position: relative;
+  max-width: 90%;
+  flex-wrap: nowrap;
 }
 
-.gallery-card {
+/* Cartas redondas */
+.carousel-card {
+  width: 180px;
+  height: 180px;
+  border-radius: 50%;
+  perspective: 1000px;
   cursor: pointer;
-  border-radius: 16px;
-  overflow: hidden;
-  background-color:  #f6c3b3, #a7706c;
-  box-shadow: 0 6px 18px rgb(0, 0, 0);
   transition: transform 0.3s ease;
+  flex: 0 0 auto;
 }
 
-.gallery-card:hover {
-  transform: scale(1.05);
+.carousel-card.center {
+  transform: scale(1.2);
+  z-index: 2;
 }
 
-.gallery-image {
-  width: 100%;
-  height: 300px;
-  object-fit: cover;
-}
-
-.gallery-card-title {
-  padding: 1rem;
-  text-align: center;
-  color: #5a4a42;
-  font-family: 'Playfair Display', serif;
-  font-size: 1.2rem;
-}
-
-/* --- MODAL --- */
-/* MODAL MEJORADO */
-
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
+/* Flip */
+.card-inner {
+  position: relative;
   width: 100%;
   height: 100%;
-  background: rgba(10, 10, 10, 0.6);
-  backdrop-filter: blur(8px);
+  transform-style: preserve-3d;
+  transition: transform 0.6s;
+  border-radius: 50%;
+}
+
+.carousel-card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  backface-visibility: hidden;
+  overflow: hidden;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 50%;
+}
+
+.card-back {
+  background: #5a4a42;
+  color: white;
+  transform: rotateY(180deg);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 999;
-  animation: fadeIn 0.4s ease-in-out;
-}
-
-.modal-content {
-  background-color: #ffffffee;
-  padding: 2rem;
-  border-radius: 16px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
-  text-align: center;
-  max-width: 800px;
-  width: 90%;
-  max-height: 90%;
-  overflow-y: auto;
-  animation: scaleIn 0.3s ease-in-out;
-  transition: all 0.3s ease-in-out;
-}
-
-.modal-image {
-  width: 100%;
-  max-height: 500px;
-  object-fit: contain;
-  border-radius: 12px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.3);
-  transition: transform 0.4s ease-in-out;
-}
-
-.modal-title {
-  margin-top: 1.5rem;
-  font-size: 1.8rem;
-  color: #5a4a42;
   font-family: 'Playfair Display', serif;
-  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
-  font-weight: 600;
-}
-
-.modal-close {
-  margin-top: 1.5rem;
-  background-color: #5a4a42;
-  color: white;
-  padding: 0.5rem 1.5rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
   font-size: 1rem;
-  transition: background-color 0.3s ease;
+  text-align: center;
+  padding: 0.5rem;
 }
 
-.modal-close:hover {
-  background-color: #3f332d;
+/* Flechas ocultas por defecto */
+.carousel-arrow {
+  font-size: 2.5rem;
+  color: #5a4a42;
+  background: rgba(255, 255, 255, 0.7);
+  padding: 0.3rem 0.8rem;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: 0.3s;
+  user-select: none;
+  opacity: 0;
+  pointer-events: none;
 }
 
-/* ANIMACIONES */
-
-@keyframes fadeIn {
-  from {
-    background: rgba(10, 10, 10, 0);
-  }
-  to {
-    background: rgba(10, 10, 10, 0.6);
-  }
+.carousel-container:hover .carousel-arrow {
+  opacity: 1;
+  pointer-events: auto;
 }
 
-@keyframes scaleIn {
-  from {
-    transform: scale(0.85);
-    opacity: 0;
+.carousel-arrow:hover {
+  background: rgba(255, 255, 255, 1);
+  transform: scale(1.1);
+}
+
+.carousel-arrow.left {
+  margin-right: 1rem;
+}
+
+.carousel-arrow.right {
+  margin-left: 1rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .carousel-container {
+    overflow-x: auto;
+    justify-content: flex-start;
   }
-  to {
-    transform: scale(1);
-    opacity: 1;
+
+  .carousel-card {
+    width: 150px;
+    height: 150px;
   }
 }
