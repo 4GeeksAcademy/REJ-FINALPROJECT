@@ -3,12 +3,12 @@ import { FaChevronLeft, FaChevronRight } from "react-icons/fa";
 import "./Gallery.css";
 
 const images = [
-  { src: "https://picsum.photos/300/300?random=1", text: "Corte clásico" },
-  { src: "https://picsum.photos/300/300?random=2", text: "Diseño moderno" },
-  { src: "https://picsum.photos/300/300?random=3", text: "Afeitado profesional" },
-  { src: "https://picsum.photos/300/300?random=4", text: "Estilo degradado" },
-  { src: "https://picsum.photos/300/300?random=5", text: "Corte juvenil" },
-  { src: "https://picsum.photos/300/300?random=6", text: "Peinado elegante" },
+  { src: "https://images.unsplash.com/photo-1632345031435-8727f6897d53?q=80", text: "Corte clásico" },
+  { src: "https://images.unsplash.com/photo-1616394584738-fc6e612e71b9?q=80", text: "Diseño moderno" },
+  { src: "https://images.unsplash.com/photo-1700760934268-8aa0ef52ce0a?q=80", text: "Afeitado profesional" },
+  { src: "https://plus.unsplash.com/premium_photo-1661493935776-a76a3e33dddf?q=80", text: "Estilo degradado" },
+  { src: "https://images.unsplash.com/photo-1568339434343-2a640a1a9946?q=80", text: "Corte juvenil" },
+  { src: "https://images.unsplash.com/photo-1593702288056-7927b442d0fa?q=80", text: "Peinado elegante" },
 ];
 
 const Gallery = () => {
