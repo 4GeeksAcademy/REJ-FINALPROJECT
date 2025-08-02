@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import logo from "../assets/img/logo1.jpg"; // Adjust the path as necessary
 
 const Navbar = () => {
 	const [dropdownOpen, setDropdownOpen] = useState(false);
@@ -8,9 +9,15 @@ const Navbar = () => {
 
 	return (
 		<nav style={styles.navbar}>
-			<Link to="/" style={{ ...styles.logo, textDecoration: "none" }}>
-				Beauty Center
+			<Link to="/" style={{ ...styles.logoContainer, textDecoration: "none" }}>
+				<h1 style={styles.logoText}>Beauty Salon</h1>
+				<img
+					src={logo}
+					alt="Beauty Center"
+					style={styles.logoImage}
+				/>
 			</Link>
+			
 			<ul style={styles.navLinks}>
 				<li><Link to="/" style={styles.link}>Home</Link></li>
 				<li><Link to="/services" style={styles.link}>Service</Link></li>
@@ -48,11 +55,24 @@ const styles = {
 		color: "#f8e9e6",
 		position: "relative",
 	},
-	logo: {
-		color: "#f8e9e6",
-		fontWeight: "bold",
-		fontSize: "24px",
-	},
+	logoContainer: {
+      display: "flex",
+      alignItems: "center",
+      gap: "1rem",
+      textDecoration: "none"
+    },
+    logoImage: {
+      height: "50px",
+	  maxHeight: "100%",
+	  backgroundColor: "transparent",
+      width: "auto",
+      borderRadius: "4px"
+    },
+    logoText: {
+      color: "white",
+      fontSize: "1.5rem",
+      fontWeight: "bold"
+    },
 	navLinks: {
 		listStyle: "none",
 		display: "flex",
