@@ -21,56 +21,56 @@ const Services = () => {
 
   const services = [
     {
-      id: 1,
+       id: 1,
       image: nail,
-      title: "Nail Art Premium",
-      description: "Manicura, pedicura y diseño de uñas con los mejores productos del mercado.",
-      duration: "45-60 minutos",
+      title: "Premium Nail Art",
+      description: "Manicure, pedicure and nail design with the best products on the market.",
+      duration: "45-60 minutes",
       price: "$30-$50",
       category: "nail"
     },
     {
       id: 2,
       image: women,
-      title: "Estilismo Femenino",
-      description: "Cortes modernos, coloración y tratamientos capilares profesionales.",
-      duration: "60-90 minutos",
+      title: "Women's Styling",
+      description: "Modern haircuts, coloring and professional hair treatments.",
+      duration: "60-90 minutes",
       price: "$40-$80",
       category: "women"
     },
     {
       id: 3,
       image: mancut,
-      title: "Corte Clásico Masculino",
-      description: "Corte de cabello tradicional con acabado perfecto.",
-      duration: "30-45 minutos",
+      title: "Classic Men's Cut",
+      description: "Traditional haircut with perfect finish.",
+      duration: "30-45 minutes",
       price: "$25-$40",
       category: "mencut"
     },
     {
       id: 4,
       image: face,
-      title: "Afeitado Premium",
-      description: "Afeitado clásico con toalla caliente y productos de lujo.",
-      duration: "40 minutos",
+      title: "Premium Shave",
+      description: "Classic shave with hot towel and luxury products.",
+      duration: "40 minutes",
       price: "$35",
       category: "face"
     },
     {
       id: 5,
       image: barber,
-      title: "Tratamiento Barbería",
-      description: "Servicio completo de barbería con masaje facial incluido.",
-      duration: "60 minutos",
+      title: "Barber Treatment",
+      description: "Complete barber service including facial massage.",
+      duration: "60 minutes",
       price: "$45",
       category: "barber"
     },
     {
       id: 6,
       image: beautySalon,
-      title: "Experiencia Completa",
-      description: "Paquete premium que incluye corte, afeitado y tratamiento facial.",
-      duration: "120 minutos",
+      title: "Complete Experience",
+      description: "Premium package including haircut, shave and facial treatment.",
+      duration: "120 minutes",
       price: "$90",
       category: "premium"
     }
@@ -140,7 +140,7 @@ const Services = () => {
             textAlign: "center"
           }}
         >
-          Nuestros Servicios
+          Our Services
         </motion.h1>
 
         <div style={{
@@ -218,10 +218,10 @@ const Services = () => {
                   whileTap={{ scale: 0.95 }}
                   onClick={(e) => {
                     e.stopPropagation();
-                    navigate("/ContactUs");
+                    navigate("/Contact");
                   }}
                 >
-                  Reservar <FaArrowRight />
+                  Contact Us <FaArrowRight />
                 </motion.button>
               </div>
             </motion.div>
@@ -347,7 +347,7 @@ const Services = () => {
                     whileTap={{ scale: 0.95 }}
                     onClick={() => setSelectedService(null)}
                   >
-                    Volver
+                    Back
                   </motion.button>
                   
                   <motion.button
@@ -368,9 +368,9 @@ const Services = () => {
                     }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.95 }}
-                    onClick={() => navigate("/ContactUs")}
+                    onClick={() => navigate("/Contact")}
                   >
-                    Reservar <FaArrowRight />
+                    Contact Us <FaArrowRight />
                   </motion.button>
                 </div>
               </div>

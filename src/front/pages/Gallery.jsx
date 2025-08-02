@@ -124,7 +124,7 @@ const Gallery = () => {
             textAlign: "center"
           }}
         >
-          Nuestra Galería
+          Gallery
         </motion.h1>
 
         {/* Category filters */}
@@ -139,25 +139,25 @@ const Gallery = () => {
             active={activeCategory === "all"}
             onClick={() => setActiveCategory("all")}
           >
-            Todos
+            all
           </CategoryButton>
           <CategoryButton 
             active={activeCategory === "haircut"}
             onClick={() => setActiveCategory("haircut")}
           >
-            Cortes
+            cuts
           </CategoryButton>
           <CategoryButton 
             active={activeCategory === "beard"}
             onClick={() => setActiveCategory("beard")}
           >
-            Barba
+            shave
           </CategoryButton>
           <CategoryButton 
             active={activeCategory === "nails"}
             onClick={() => setActiveCategory("nails")}
           >
-            Uñas
+            nails
           </CategoryButton>
           <CategoryButton 
             active={activeCategory === "spa"}
