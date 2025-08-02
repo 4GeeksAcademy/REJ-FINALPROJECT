@@ -77,49 +77,50 @@ const Home = () => {
             animate={{ opacity: 1 }}
             transition={{ delay: 0.3 }}
           >
-            <img 
-              src={logo} 
-              alt="Beauty and Style Logo" 
-              style={{
-                height: "80px",
-                marginBottom: "2rem",
-                filter: "drop-shadow(0 0 10px rgba(255,255,255,0.3))"
-              }}
-            />
-            
-            <motion.h1 
-              style={{
-                fontSize: "clamp(2rem, 5vw, 3.5rem)",
-                fontWeight: "700",
-                marginBottom: "1.5rem",
-                background: "linear-gradient(90deg, #fff, #f8d7d3)",
-                WebkitBackgroundClip: "text",
-                backgroundClip: "text",
-                color: "transparent"
-              }}
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4 }}
-            >
-              Beauty And Style
-            </motion.h1>
-            
-            <motion.p
-              style={{
-                fontSize: "1.2rem",
-                color: "rgba(255,255,255,0.9)",
-                lineHeight: "1.6",
-                marginBottom: "2.5rem",
-                textShadow: "0 2px 4px rgba(0,0,0,0.1)"
-              }}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-            >
-              "Vive, Vive! Cartago Vive!"
-              <br />
-              Experience luxury beauty treatments with our expert stylists.
-            </motion.p>
+           <div style={{
+  display: "flex",
+  flexDirection: "column",
+  alignItems: "center",
+  textAlign: "center",
+  marginBottom: "2rem"
+}}>
+  <motion.div
+    initial={{ scale: 0.9, opacity: 0 }}
+    animate={{ scale: 1, opacity: 1 }}
+    transition={{ delay: 0.3, type: "spring" }}
+    style={{ marginBottom: "1.5rem" }}
+  >
+    <img 
+      src={logo} 
+      alt="Beauty and Style Logo" 
+      style={{
+        height: "120px", // Tamaño aumentado
+        width: "auto",
+        filter: "drop-shadow(0 0 15px rgba(255,255,255,0.4))",
+        borderRadius: "8px"
+      }}
+    />
+  </motion.div>
+  
+  <motion.h1 
+    style={{
+      fontSize: "clamp(2rem, 5vw, 3.5rem)",
+      fontWeight: "700",
+      marginBottom: "1.5rem",
+      background: "linear-gradient(90deg, #fff, #f8d7d3)",
+      WebkitBackgroundClip: "text",
+      backgroundClip: "text",
+      color: "transparent",
+      textAlign: "center",
+      width: "100%"
+    }}
+    initial={{ opacity: 0, y: 20 }}
+    animate={{ opacity: 1, y: 0 }}
+    transition={{ delay: 0.5 }}
+  >
+    Beauty And Style
+  </motion.h1>
+</div>
             
             <motion.button
               onClick={() => navigate("/Contact")}
