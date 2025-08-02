@@ -1,149 +1,266 @@
-/* Contenedor base y galería */
-.conteiner-demo {
+/* Estilos base para la galería */
+.gallery-container {
+  position: relative;
+  width: 100%;
+  padding: 5rem 2rem;
+  background: linear-gradient(135deg, rgba(197, 142, 126, 0.9) 0%, rgba(102, 63, 61, 0.9) 100%);
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 2rem;
-  background: linear-gradient(to bottom right, #f6c3b3, #a7706c);
-  min-height: 80vh;
+  overflow: hidden;
 }
 
-.titulo-principal {
-  margin-bottom: 2rem;
-  font-family: "Playfair Display", serif;
-  font-size: 2.5rem;
-  color: #5a4a42;
-}
-
-/* Galería: grid de 3 cards */
-.galeria {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 2rem;
-  max-width: 1000px;
-  width: 100%;
-}
-
-/* Responsive para tablets/móviles */
-@media (max-width: 768px) {
-  .galeria {
-    grid-template-columns: repeat(2, 1fr);
-  }
-}
-
-/* Cartas: tamaño más grande y elegante */
-.card-corte {
-  background-color: rgba(161, 98, 93, 0.21);
-  border-radius: 12px;
-  border: 2px solid #5a4a42;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
+.gallery-title {
   text-align: center;
+  color: #fff;
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  margin-bottom: 3rem;
+  font-weight: 700;
+  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  background: linear-gradient(90deg, #fff, #f8d7d3);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Contenedor del carrusel */
+.carousel-wrapper {
+  width: 100%;
+  max-width: 1400px;
+  position: relative;
+  padding: 0 3rem;
+}
+
+.carousel-track {
+  display: flex;
+  gap: 2.5rem;
+  padding: 1rem 0;
+  scroll-snap-type: x mandatory;
+  overflow-x: auto;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Eliminar scrollbar visible pero mantener funcionalidad */
+.carousel-track::-webkit-scrollbar {
+  display: none;
+}
+
+/* Tarjetas del carrusel */
+.carousel-card {
+  scroll-snap-align: center;
+  min-width: 300px;
+  height: 380px;
+  border-radius: 20px;
+  perspective: 1000px;
+  cursor: pointer;
+  flex-shrink: 0;
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+}
+
+.carousel-card:hover {
+  transform: translateY(-10px);
+}
+
+/* Efecto de flip */
+.card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  transform-style: preserve-3d;
+  transition: transform 0.8s cubic-bezier(0.4, 0.2, 0.2, 1);
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.carousel-card.flipped .card-inner {
+  transform: rotateY(180deg);
+}
+
+/* Lados de la tarjeta */
+.card-front,
+.card-back {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  backface-visibility: hidden;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.card-front {
+  background: #fff;
+}
+
+.carousel-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.5s ease;
+}
+
+.carousel-card:hover .carousel-image {
+  transform: scale(1.05);
+}
+
+.card-back {
+  background: linear-gradient(135deg, #5a4a42 0%, #7a6a62 100%);
+  color: white;
+  transform: rotateY(180deg);
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 1.5rem;
-  cursor: pointer;
-  width: 100%;
-  max-width: 320px;
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  justify-content: center;
+  align-items: center;
+  padding: 2rem;
+  text-align: center;
 }
 
-.card-corte:hover {
-  transform: scale(1.08);
-  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
-}
-
-/* Imagen dentro de la carta */
-.card-image {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
+.card-back h3 {
+  font-size: 1.5rem;
   margin-bottom: 1rem;
-}
-
-/* Título dentro de la carta */
-.descripcion-corte h4 {
-  color: #5a4a42;
-  font-family: "Playfair Display", serif;
-  font-weight: 700;
-  margin-bottom: 1rem;
-}
-
-/* Botón dentro de la carta */
-.btn {
-  background-color: #5a4a42;
-  color: #fff;
-  padding: 0.6rem 1.2rem;
-  border: none;
-  border-radius: 8px;
-  cursor: pointer;
   font-weight: 600;
-  transition: background-color 0.3s ease;
 }
 
-.btn:hover {
-  background-color: #4a3b36;
+.card-back p {
+  font-size: 1rem;
+  line-height: 1.6;
+  margin-bottom: 2rem;
 }
 
-/* Estilos modal overlay y modal content centrado */
-.modal-overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  /* Fondo igual al fondo de la página */
-  background: linear-gradient(
-  to bottom right, 
-  rgba(246, 195, 179, 0.6),
-  rgba(167, 112, 108, 0.6)   );
-  box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 10px;
+/* Flechas de navegación */
+.carousel-nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.carousel-arrow {
+  pointer-events: auto;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 1000;
-  backdrop-filter: blur(4px); /* efecto difuso */
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+  border: none;
+  color: #5a4a42;
+  font-size: 1.5rem;
 }
 
-/* Modal con animación flip y estilos elegantes */
-.modal-content {
-  background: linear-gradient(135deg, #f6c3b3cc 0%, #a7706ccc 100%);
-  border-radius: 16px;
-  padding: 2rem;
-  max-width: 600px;
-  width: 90%;
-  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
-  animation: spinIn 0.5s ease forwards;
-  transform-style: preserve-3d;
-  backface-visibility: hidden;
-  outline: none;
+.carousel-arrow:hover {
+  background: white;
+  transform: scale(1.1);
 }
 
-/* Animación flip modal */
-@keyframes spinIn {
-  0% {
-    transform: rotateY(90deg) scale(0.5);
-    opacity: 0;
-  }
-  100% {
-    transform: rotateY(0deg) scale(1);
-    opacity: 1;
-  }
+.carousel-arrow.left {
+  margin-left: -1.5rem;
 }
 
-/* Imagen en el modal */
-.modal-image {
-  width: 100%;
-  height: 250px;
-  object-fit: cover;
-  border-radius: 12px;
-  margin-bottom: 1rem;
+.carousel-arrow.right {
+  margin-right: -1.5rem;
 }
 
-/* Botones dentro del modal */
-.modal-buttons {
+/* Indicadores de posición */
+.carousel-indicators {
   display: flex;
-  justify-content: space-between;
-  margin-top: 1.5rem;
+  justify-content: center;
+  gap: 0.8rem;
+  margin-top: 2.5rem;
+}
+
+.carousel-indicator {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.4);
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.carousel-indicator.active {
+  background: white;
+  transform: scale(1.2);
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .carousel-card {
+    min-width: 280px;
+    height: 360px;
+  }
+}
+
+@media (max-width: 768px) {
+  .gallery-container {
+    padding: 3rem 1rem;
+  }
+  
+  .carousel-wrapper {
+    padding: 0 1rem;
+  }
+  
+  .carousel-track {
+    gap: 1.5rem;
+  }
+  
+  .carousel-card {
+    min-width: 260px;
+    height: 340px;
+  }
+  
+  .carousel-arrow {
+    width: 40px;
+    height: 40px;
+    font-size: 1.2rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .carousel-card {
+    min-width: 85vw;
+    height: 300px;
+  }
+  
+  .carousel-nav {
+    display: none;
+  }
+  
+  .card-back {
+    padding: 1.5rem;
+  }
+  
+  .card-back h3 {
+    font-size: 1.3rem;
+  }
+  
+  .card-back p {
+    font-size: 0.9rem;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.gallery-title {
+  animation: fadeIn 0.8s ease-out forwards;
+}
+
+.carousel-card {
+  animation: fadeIn 0.6s ease-out forwards;
+  animation-delay: calc(var(--order) * 0.1s);
 }
