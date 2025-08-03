@@ -6,10 +6,10 @@ import User_Card from "../components/User_Card";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Carousel from "../components/Carousel";
-
+import { Image } from 'cloudinary-react';
 
 const Home_Stylist = () => {
-  const api_URL='https://glorious-space-spork-pjwx47757q4936gjw-3001.app.github.dev/'
+  const api_URL= import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
@@ -17,9 +17,17 @@ const Home_Stylist = () => {
   const [doneItems, setDoneItems] = useState([]);
   const [workList, setWorkList] = useState([]);
   const [user, setUser] = useState([]);
-  
+  const [reviewDescription,setReviewDescription]=useState('');
+    
   let duration=0;
   let cost=0;
+  let imgUrls=[];
+  let imgid=[];
+
+  function setReview(doneWorks,appointmentReview){
+    setReviewDescription(appointmentReview);
+    setDoneItems(doneWorks);
+  }
 
   function getAppointments(){
     
@@ -35,7 +43,7 @@ const Home_Stylist = () => {
     let start_date =year+'-'+month+'-'+day;
     end_date=end_year+'-'+end_month+'-'+end_day;
     let url = api_URL+'stylist/appointments_date?start_date='+start_date+'&end_date='+end_date;
-  	//let url = api_URL+'/stylist/appoitments_date?start_date=2025-07-18&end_date=2025-07-19';
+  	
     fetch(url)
     .then((response)=>{
 			if(response.ok==false){
@@ -50,6 +58,8 @@ const Home_Stylist = () => {
 			alert(error)
 		})
 	}
+
+
 
   function getDoneAppointments(user_id){
     
@@ -75,8 +85,9 @@ const Home_Stylist = () => {
     setUser(user_objeto);
     console.log(user_objeto);
     getDoneAppointments(user_objeto.id);
+    let url = api_URL+"stylist/appoitment_detail/"+indice;
 
-    fetch("https://glorious-space-spork-pjwx47757q4936gjw-3001.app.github.dev/stylist/appoitment_detail/"+indice)
+    fetch(url)
 		.then((response)=>{
 		  console.log(response);
 			if(response.ok==false){
@@ -94,32 +105,90 @@ const Home_Stylist = () => {
 		
 	}
 
-  function editAppointment(indice,user_objeto) {
-    setUser(user_objeto);
-    console.log(user_objeto);
-    getDoneAppointments(user_objeto.id);
+  function editAppointment(appointment_id, works, status) {
+   
+    let cantidadTrabajos = works.length;
 
-    fetch("https://glorious-space-spork-pjwx47757q4936gjw-3001.app.github.dev/stylist/appoitment_detail/"+indice)
-		.then((response)=>{
-		  console.log(response);
-			if(response.ok==false){
-				throw new Error ('Error al consultar Las Citas');
-			}
-		  return response.json();
+    for (let i = 0; i < cantidadTrabajos; i++) {
+        ImageUpload(works[i][0],works[i][1]);
+    }
+
+    let url = api_URL+"stylist/appointments/"+appointment_id
+    let bodyData = {appointment_id: appointment_id, 
+                    status: status
+                  };
+
+		fetch(url,{
+			            method:"PUT",
+			            body: JSON.stringify(bodyData),
+			            headers:{'Content-Type':'application/json'}
 		})
-		.then((data)=>{
-			setWorkList(data.items);
-			console.log("items:",workList);
+			.then((response)=>{
+				return response.json();
+			})
+			.then((data)=>{
+				console.log(data);
+			})
+			.catch(()=>{
+				alert(error)
+			})
+      
+	}
+
+  function updateAppointmentItem(id,imageUrl) {
+    let url = api_URL+'stylist/apointment_item_update'
+    let bodyData = {id: id, 
+                    picture: imageUrl};
+    console.log(bodyData);
+		  fetch(url,{
+			            method:"PUT",
+			            body: JSON.stringify(bodyData),
+			            headers:{'Content-Type':'application/json'}
 		})
-		.catch((error)=>{
-			alert(error)
-		})
+			.then((response)=>{
+				return response.json();
+			})
+			.then((data)=>{
+				console.log(data);
+			})
+			.catch(()=>{
+				alert(error)
+			})
+	}
+
     
+  function ImageUpload(id,file) {
+    console.log(file);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_PRESET); 
+    formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY);
+    formData.append('cloud_name', import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
+    
+    let url = "https://api.cloudinary.com/v1_1/"+import.meta.env.VITE_CLOUDINARY_CLOUD_NAME+"/image/upload";
+    
+    fetch(url,{
+			            method:"POST",
+			            body: formData,
+			          
+		})
+			.then((response)=>{
+				return response.json();
+			})
+			.then((data)=>{
+				imgUrls.push([id,data.secure_url]);
+        updateAppointmentItem(id,data.secure_url) 
+			})
+			.catch(()=>{
+				alert(error)
+			})
 
-		
-	}
+    
+    }
 
 
+ 
+ 
  useEffect(()=>{
     getAppointments();
 	},[selectedDate,workList,user,doneAppointments,doneItems])
@@ -131,14 +200,15 @@ const Home_Stylist = () => {
       
       <div className="row text-center" style ={{ height:"50%"}}>
         <div className="col-4 ">
-          <div className="m-1">
-             <h2 className="columnTitleStyle">Appointment Date</h2>
+          <h2 className="columnTitleStyle">Appointment Date</h2>
+          <div className="m-1 carousel-style">
              <DatePicker selected={selectedDate} onChange={(date) => setSelectedDate(date) } inline/>
           </div> 
         </div>
         <div className="col-8">
-          <div className="border m-1 p-2 scroll" >
-              <h2 className="columnTitleStyle">Scheduled Appointments</h2>
+          <h2 className="columnTitleStyle">Scheduled Appointments</h2>
+          <div className="m-1 p-2 carousel-style" >
+              
               <div className="list-group">
                 {appointments.map((appointment, index, array) => {
                   return (
@@ -175,17 +245,19 @@ const Home_Stylist = () => {
         </div>
         <div className="col-6">
             <h2 className="columnTitleStyle">User History</h2>
-            <div className="bg-danger-subtle row">
+            <div className="row">
                 <div className="col-3 pt-1">
                   {doneAppointments.map((doneAppointment, index, array) => {
+                     let review=doneAppointment.review +" Stars " + doneAppointment.review_description;
                       return (
-                        <button type="button" className="btn boton" onClick={() => setDoneItems(doneAppointment.items)}>{doneAppointment.date}</button>
+                        <button type="button" className="btn boton" onClick={() => setReview(doneAppointment.items,review)}>{doneAppointment.date}</button>
                       )
                     })
                   }
                   </div>
-                <div className="col-9 pt-1">
+                <div className="col-9 pt-1 ">
                      <Carousel doneItems={doneItems} />
+                     <p><b>{reviewDescription}</b></p>
                 </div>
             </div>
             
@@ -200,38 +272,6 @@ const Home_Stylist = () => {
 };
 
 
-const textSectionStyle = {
-  flex: 1,
-  maxWidth: "50%",
-  paddingRight: "3rem",
-};
-
-const titleStyle = {
-  fontSize: "2.5rem",
-  color: "#5a4a42",
-  marginBottom: "1.5rem",
-  fontWeight: "500",
-};
-
-const paragraphStyle = {
-  fontSize: "1.1rem",
-  color: "#7a6a62",
-  lineHeight: "1.6",
-  marginBottom: "2rem",
-};
-
-const imageSectionStyle = {
-  flex: 1,
-  display: "flex",
-  justifyContent: "center",
-};
-
-const imageStyle = {
-  width: "100%",
-  maxWidth: "600px",
-  borderRadius: "10px",
-  boxShadow: "0 15px 30px rgba(0,0,0,0.1)",
-};
 
 
 export default Home_Stylist;

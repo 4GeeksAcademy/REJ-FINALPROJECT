@@ -67,11 +67,11 @@
 .modalStyle  {
     align-items: center;
     justify-Content: space-between;
-    padding: 4rem;
+    padding: 3rem;
     background: linear-gradient(135deg, rgba(197, 142, 126, 0.9) 0%, rgba(102, 63, 61, 0.9) 100%);
     background-Repeat: no-repeat;
     background-Attachment: fixed;
-    width:30rem;
+    width:300rem;
 }
 
 .card {
@@ -102,7 +102,7 @@
   text-Align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
-/* Smooth transitions for interactive elements */
+
 button, img {
   transition: all 0.3s ease;
 }
@@ -118,3 +118,4 @@ button, img {
     margin-bottom: 2rem;
   }
 }
+
