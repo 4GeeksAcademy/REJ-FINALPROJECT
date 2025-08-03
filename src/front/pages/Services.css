@@ -1,50 +1,149 @@
+/* Contenedor base y galería */
 .conteiner-demo {
   display: flex;
   flex-direction: column;
   align-items: center;
   padding: 2rem;
-  background: linear-gradient(to right, #0f2027, #203a43, #2c5364);
- 
+  background: linear-gradient(to bottom right, #f6c3b3, #a7706c);
+  min-height: 80vh;
 }
+
+.titulo-principal {
+  margin-bottom: 2rem;
+  font-family: "Playfair Display", serif;
+  font-size: 2.5rem;
+  color: #5a4a42;
+}
+
+/* Galería: grid de 3 cards */
+.galeria {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 2rem;
+  max-width: 1000px;
+  width: 100%;
+}
+
+/* Responsive para tablets/móviles */
+@media (max-width: 768px) {
+  .galeria {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Cartas: tamaño más grande y elegante */
 .card-corte {
+  background-color: rgba(161, 98, 93, 0.21);
+  border-radius: 12px;
+  border: 2px solid #5a4a42;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1.5rem;
+  cursor: pointer;
+  width: 100%;
+  max-width: 320px;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
 
 .card-corte:hover {
-  transform: scale(1.05);
+  transform: scale(1.08);
   box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
 }
-.descripcion-corte {
-  font-size: 1.2rem;
-  color: #333;
-  text-align: center;
-  margin: 0.5em 0;
+
+/* Imagen dentro de la carta */
+.card-image {
+  width: 100%;
+  height: 200px;
+  object-fit: cover;
+  border-radius: 8px;
+  margin-bottom: 1rem;
 }
-.galeria {
+
+/* Título dentro de la carta */
+.descripcion-corte h4 {
+  color: #5a4a42;
+  font-family: "Playfair Display", serif;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* Botón dentro de la carta */
+.btn {
+  background-color: #5a4a42;
+  color: #fff;
+  padding: 0.6rem 1.2rem;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: background-color 0.3s ease;
+}
+
+.btn:hover {
+  background-color: #4a3b36;
+}
+
+/* Estilos modal overlay y modal content centrado */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  /* Fondo igual al fondo de la página */
+  background: linear-gradient(
+  to bottom right, 
+  rgba(246, 195, 179, 0.6),
+  rgba(167, 112, 108, 0.6)   );
+  box-shadow: rgba(0, 0, 0, 0.5) 0px 0px 10px;
   display: flex;
-  flex-wrap: wrap;
+  align-items: center;
   justify-content: center;
-  gap: 2rem;
+  z-index: 1000;
+  backdrop-filter: blur(4px); /* efecto difuso */
 }
 
-.card-corte {
-  flex: 1 1 calc(25% - 2rem); 
-  max-width: calc(25% - 2rem);
+/* Modal con animación flip y estilos elegantes */
+.modal-content {
+  background: linear-gradient(135deg, #f6c3b3cc 0%, #a7706ccc 100%);
+  border-radius: 16px;
+  padding: 2rem;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.4);
+  animation: spinIn 0.5s ease forwards;
+  transform-style: preserve-3d;
+  backface-visibility: hidden;
+  outline: none;
 }
 
-@media (max-width: 768px) {
-  .card-corte {
-    flex: 1 1 calc(50% - 2rem); 
-    max-width: calc(50% - 2rem);
-  }
-}
-@keyframes fadeIn {
-  from {
+/* Animación flip modal */
+@keyframes spinIn {
+  0% {
+    transform: rotateY(90deg) scale(0.5);
     opacity: 0;
-    transform: translateY(10px);
   }
-  to {
+  100% {
+    transform: rotateY(0deg) scale(1);
     opacity: 1;
-    transform: translateY(0);
   }
+}
+
+/* Imagen en el modal */
+.modal-image {
+  width: 100%;
+  height: 250px;
+  object-fit: cover;
+  border-radius: 12px;
+  margin-bottom: 1rem;
+}
+
+/* Botones dentro del modal */
+.modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1.5rem;
 }
