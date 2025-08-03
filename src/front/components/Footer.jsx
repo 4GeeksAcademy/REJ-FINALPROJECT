@@ -41,6 +41,8 @@ export const Footer = () => {
             <p>+34 123 456 789</p>
             <p><a href="mailto:hola@beautysalon.com" style={emailLinkStyle}>hola@beautysalon.com</a></p>
           </address>
+        </div>
+        <div style={columnStyle}>
           <div style={businessHoursStyle}>
             <p><strong>Horario:</strong></p>
             <p>Lun-Vie: 9:00 - 20:00</p>

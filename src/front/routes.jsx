@@ -14,7 +14,7 @@ import  Services  from "./pages/Services";
 import  Home_Stylist  from "./pages/Home_Stylist";
 import  Home_User  from "./pages/Home_User";
 import  Home_Admin  from "./pages/Home_Admin";
-
+import ContactUs from "./pages/ContactUs";
 
 
 
@@ -39,7 +39,7 @@ export const router = createBrowserRouter(
         <Route path="/Home_User" element={<Home_User />} />
         <Route path="/gallery" element={<Gallery />} /> 
         <Route path="/Home_Admin" element={<Home_Admin />} /> 
-  
+        <Route path="/contact" element={<ContactUs />} /> {/* Contact Us page */}
 
       </Route>
     )

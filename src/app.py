@@ -15,6 +15,8 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_cors import CORS
 
+from flask_cors import CORS
+
 # Inicialización de la app
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../dist/')
@@ -601,7 +603,7 @@ def update_stylist_appointment_item():
 #-----------------------Crear una cita--------------------------------------- ok
 @app.route('/stylist/appointment', methods=['POST'])
 #@jwt_required()
-def create_appointment_stylist():
+def create_appointment_Stylist():
     #current_user = get_jwt_identity()
     current_user = "fonseca@gmail"
     user = User.query.filter_by(email=current_user).first()

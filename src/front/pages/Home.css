@@ -102,3 +102,20 @@
   text-Align: center;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
 }
+
+button, img {
+  transition: all 0.3s ease;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .glass-container {
+    padding: 2rem 1.5rem !important;
+  }
+  
+  .content-section {
+    padding-right: 0 !important;
+    margin-bottom: 2rem;
+  }
+}
+
