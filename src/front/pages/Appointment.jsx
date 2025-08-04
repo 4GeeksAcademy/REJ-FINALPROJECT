@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { FaCalendarAlt, FaClock, FaArrowRight } from "react-icons/fa";
+import { FaCalendarAlt, FaClock, FaArrowRight, FaTimes } from "react-icons/fa";
 import "./Appointment.css";
 
 const Appointment = () => {
@@ -9,8 +9,9 @@ const Appointment = () => {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedService, setSelectedService] = useState("");
+  const [showConfirmation, setShowConfirmation] = useState(false);
 
-  // Available services
+  // Servicios disponibles
   const services = [
     { id: 1, name: "Classic Cut", duration: "30 min", price: "$25" },
     { id: 2, name: "Modern Cut", duration: "45 min", price: "$35" },
@@ -20,36 +21,42 @@ const Appointment = () => {
     { id: 6, name: "Premium Package", duration: "120 min", price: "$90" }
   ];
 
-  // Available time slots
+  // Horarios disponibles
   const availableTimes = [
-    "9:00 AM", "10:00 AM", "11:00 AM", 
+    "9:00 AM", "10:00 AM", "11:00 AM",
     "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"
   ];
 
-  // Generate days for current month + next month
+  // Generar días del mes actual + próximo mes
   const generateCalendarDays = () => {
     const days = [];
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
-    
-    // Days in current month
+
+    // Días del mes actual
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
-    
+
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(currentYear, currentMonth, i);
-      if (date >= today) { // Only show future dates
+      if (date >= today) { // Solo mostrar días futuros
         days.push(date);
       }
     }
-    
+
     return days;
   };
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Logic to submit appointment would go here
-    navigate("/confirmation", {
+    if (selectedDate && selectedTime && selectedService) {
+      setShowConfirmation(true);
+    }
+  };
+
+  const handleCloseModal = () => {
+    setShowConfirmation(false);
+    navigate("/", {
       state: {
         date: selectedDate,
         time: selectedTime,
@@ -96,7 +103,7 @@ const Appointment = () => {
       </div>
 
       {/* Main content with glass morphism */}
-      <motion.div 
+      <motion.div
         style={{
           ...glassStyle,
           borderRadius: "24px",
@@ -110,7 +117,7 @@ const Appointment = () => {
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
       >
-        <motion.h1 
+        <motion.h1
           style={{
             fontSize: "clamp(2rem, 5vw, 3.5rem)",
             fontWeight: "700",
@@ -126,7 +133,7 @@ const Appointment = () => {
         </motion.h1>
 
         <form onSubmit={handleSubmit} style={formStyle}>
-          {/* Service selection */}
+          {/* Service Selection */}
           <div style={formSectionStyle}>
             <h3 style={sectionTitleStyle}>
               <FaCalendarAlt style={{ marginRight: "0.5rem" }} />
@@ -164,7 +171,7 @@ const Appointment = () => {
                 const day = date.getDate();
                 const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
                 const isSelected = selectedDate && selectedDate.toDateString() === date.toDateString();
-                
+
                 return (
                   <motion.div
                     key={index}
@@ -183,7 +190,7 @@ const Appointment = () => {
             </div>
           </div>
 
-          {/* Time slots */}
+          {/* Time Selection */}
           {selectedDate && (
             <div style={formSectionStyle}>
               <h3 style={sectionTitleStyle}>
@@ -208,7 +215,7 @@ const Appointment = () => {
             </div>
           )}
 
-          {/* Submit button */}
+          {/* Submit Button */}
           <motion.button
             type="submit"
             style={{
@@ -233,11 +240,120 @@ const Appointment = () => {
           </motion.button>
         </form>
       </motion.div>
+
+      {/* Confirmation Modal */}
+      {showConfirmation && (
+        <motion.div
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            width: "100%",
+            height: "100%",
+            background: "rgba(0,0,0,0.7)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 1000
+          }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+        >
+          <motion.div
+            style={{
+              background: "linear-gradient(135deg, #f8f8f8 0%, #ffffff 100%)",
+              borderRadius: "16px",
+              padding: "2rem",
+              maxWidth: "500px",
+              width: "90%",
+              position: "relative"
+            }}
+            initial={{ y: -50, opacity: 0 }}
+            animate={{ y: 0, opacity: 1 }}
+          >
+            <button
+              onClick={handleCloseModal}
+              style={{
+                position: "absolute",
+                top: "1rem",
+                right: "1rem",
+                background: "none",
+                border: "none",
+                fontSize: "1.5rem",
+                cursor: "pointer",
+                color: "#a7706c"
+              }}
+            >
+              <FaTimes />
+            </button>
+
+            <h2 style={{
+              color: "#a7706c",
+              marginBottom: "1.5rem",
+              textAlign: "center"
+            }}>
+              Appointment Confirmed!
+            </h2>
+
+            <div style={{
+              background: "rgba(167, 112, 108, 0.1)",
+              padding: "1.5rem",
+              borderRadius: "12px",
+              marginBottom: "1.5rem"
+            }}>
+              <p style={{ marginBottom: "0.5rem", color: "#333" }}>
+                <strong>Service:</strong> {selectedService}
+              </p>
+              <p style={{ marginBottom: "0.5rem", color: "#333" }}>
+                <strong>Date:</strong> {selectedDate.toLocaleDateString('en-US', {
+                  weekday: 'long',
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </p>
+              <p style={{ color: "#333" }}>
+                <strong>Time:</strong> {selectedTime}
+              </p>
+            </div>
+
+            <p style={{
+              color: "#666",
+              lineHeight: "1.6",
+              marginBottom: "2rem",
+              textAlign: "center"
+            }}>
+              Thank you for booking with us! We've sent a confirmation to your email.
+              Please arrive 10 minutes before your appointment time.
+            </p>
+
+            <button
+              onClick={handleCloseModal}
+              style={{
+                background: "linear-gradient(90deg, #a7706c, #c58e7e)",
+                color: "#fff",
+                border: "none",
+                padding: "0.8rem 1.5rem",
+                borderRadius: "50px",
+                fontSize: "1rem",
+                fontWeight: "600",
+                cursor: "pointer",
+                display: "block",
+                margin: "0 auto",
+                width: "100%",
+                maxWidth: "200px"
+              }}
+            >
+              Close
+            </button>
+          </motion.div>
+        </motion.div>
+      )}
     </div>
   );
 };
 
-// Styles
+// Estilos
 const particlesContainer = {
   position: "absolute",
   top: 0,
