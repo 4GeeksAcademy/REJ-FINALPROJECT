@@ -10,35 +10,35 @@ const Appointment = () => {
   const [selectedTime, setSelectedTime] = useState("");
   const [selectedService, setSelectedService] = useState("");
 
-  // Servicios disponibles
+  // Available services
   const services = [
-    { id: 1, name: "Corte Clásico", duration: "30 min", price: "$25" },
-    { id: 2, name: "Corte Moderno", duration: "45 min", price: "$35" },
-    { id: 3, name: "Afeitado Premium", duration: "40 min", price: "$30" },
-    { id: 4, name: "Tratamiento Facial", duration: "60 min", price: "$50" },
-    { id: 5, name: "Manicura Completa", duration: "45 min", price: "$35" },
-    { id: 6, name: "Paquete Premium", duration: "120 min", price: "$90" }
+    { id: 1, name: "Classic Cut", duration: "30 min", price: "$25" },
+    { id: 2, name: "Modern Cut", duration: "45 min", price: "$35" },
+    { id: 3, name: "Premium Shave", duration: "40 min", price: "$30" },
+    { id: 4, name: "Facial Treatment", duration: "60 min", price: "$50" },
+    { id: 5, name: "Complete Manicure", duration: "45 min", price: "$35" },
+    { id: 6, name: "Premium Package", duration: "120 min", price: "$90" }
   ];
 
-  // Horarios disponibles
+  // Available time slots
   const availableTimes = [
     "9:00 AM", "10:00 AM", "11:00 AM", 
     "1:00 PM", "2:00 PM", "3:00 PM", "4:00 PM"
   ];
 
-  // Generar días del mes actual + próximo mes
+  // Generate days for current month + next month
   const generateCalendarDays = () => {
     const days = [];
     const today = new Date();
     const currentMonth = today.getMonth();
     const currentYear = today.getFullYear();
     
-    // Días del mes actual
+    // Days in current month
     const daysInMonth = new Date(currentYear, currentMonth + 1, 0).getDate();
     
     for (let i = 1; i <= daysInMonth; i++) {
       const date = new Date(currentYear, currentMonth, i);
-      if (date >= today) { // Solo mostrar días futuros
+      if (date >= today) { // Only show future dates
         days.push(date);
       }
     }
@@ -48,7 +48,7 @@ const Appointment = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // Aquí iría la lógica para enviar la cita
+    // Logic to submit appointment would go here
     navigate("/confirmation", {
       state: {
         date: selectedDate,
@@ -122,15 +122,15 @@ const Appointment = () => {
             textAlign: "center"
           }}
         >
-          Reserva tu Cita
+          Book Your Appointment
         </motion.h1>
 
         <form onSubmit={handleSubmit} style={formStyle}>
-          {/* Selección de servicio */}
+          {/* Service selection */}
           <div style={formSectionStyle}>
             <h3 style={sectionTitleStyle}>
               <FaCalendarAlt style={{ marginRight: "0.5rem" }} />
-              Selecciona un Servicio
+              Select a Service
             </h3>
             <div style={servicesGridStyle}>
               {services.map(service => (
@@ -153,16 +153,16 @@ const Appointment = () => {
             </div>
           </div>
 
-          {/* Calendario */}
+          {/* Calendar */}
           <div style={formSectionStyle}>
             <h3 style={sectionTitleStyle}>
               <FaCalendarAlt style={{ marginRight: "0.5rem" }} />
-              Selecciona una Fecha
+              Select a Date
             </h3>
             <div style={calendarGridStyle}>
               {generateCalendarDays().map((date, index) => {
                 const day = date.getDate();
-                const weekday = ["Dom", "Lun", "Mar", "Mié", "Jue", "Vie", "Sáb"][date.getDay()];
+                const weekday = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"][date.getDay()];
                 const isSelected = selectedDate && selectedDate.toDateString() === date.toDateString();
                 
                 return (
@@ -183,12 +183,12 @@ const Appointment = () => {
             </div>
           </div>
 
-          {/* Horarios */}
+          {/* Time slots */}
           {selectedDate && (
             <div style={formSectionStyle}>
               <h3 style={sectionTitleStyle}>
                 <FaClock style={{ marginRight: "0.5rem" }} />
-                Selecciona un Horario
+                Select a Time
               </h3>
               <div style={timesGridStyle}>
                 {availableTimes.map((time, index) => (
@@ -208,7 +208,7 @@ const Appointment = () => {
             </div>
           )}
 
-          {/* Botón de reserva */}
+          {/* Submit button */}
           <motion.button
             type="submit"
             style={{
@@ -229,7 +229,7 @@ const Appointment = () => {
             whileTap={{ scale: 0.95 }}
             disabled={!selectedDate || !selectedTime || !selectedService}
           >
-            Confirmar Cita <FaArrowRight />
+            Confirm Appointment <FaArrowRight />
           </motion.button>
         </form>
       </motion.div>
@@ -237,7 +237,7 @@ const Appointment = () => {
   );
 };
 
-// Estilos
+// Styles
 const particlesContainer = {
   position: "absolute",
   top: 0,
