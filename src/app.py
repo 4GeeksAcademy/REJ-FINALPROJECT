@@ -10,15 +10,19 @@ from flask_bcrypt import Bcrypt
 from datetime import timedelta, datetime
 from sqlalchemy import func
 from api.utils import APIException, generate_sitemap
-from api.models import db, WorkType, User, RoleEnum, Appointment
+from api.models import db, WorkType, User, RoleEnum, Appointment, AppointmentList 
 from api.admin import setup_admin
 from api.commands import setup_commands
+from flask_cors import CORS
+
+from flask_cors import CORS
 
 # Inicialización de la app
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
 app.url_map.strict_slashes = False
+CORS(app)
 
 # Configuración
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret-key')
@@ -72,8 +76,16 @@ def admin_dashboard():
         return jsonify({"msg": "Acceso no autorizado"}), 403
 
     total_appointments = Appointment.query.count()
-    by_status = db.session.query(Appointment.status, func.count(Appointment.id)).group_by(Appointment.status).all()
-    by_stylist = db.session.query(Appointment.stylist_id, func.count(Appointment.id)).group_by(Appointment.stylist_id).all()
+
+    by_status = db.session.query(
+        Appointment.status,
+        func.count(Appointment.id)
+    ).group_by(Appointment.status).all()
+
+    by_stylist = db.session.query(
+        Appointments.stylist_id,
+        func.count(Appointments.id)
+    ).group_by(Appointments.stylist_id).all()
 
     summary = {
         "total_appointments": total_appointments,
@@ -145,6 +157,7 @@ def update_service(service_id):
 
 @app.route('/admin/services/<int:service_id>', methods=['DELETE'])
 @jwt_required()
+
 def delete_service(service_id):
     user_email = get_jwt_identity()
     user = User.query.filter_by(email=user_email).first()
@@ -164,6 +177,7 @@ def delete_service(service_id):
 
 @app.route('/admin/users', methods=['GET'])
 @jwt_required()
+
 def get_all_users():
     current_user_email = get_jwt_identity()
     user = User.query.filter_by(email=current_user_email).first()
@@ -178,6 +192,7 @@ def get_all_users():
 
 @app.route('/admin/appointments/<int:appointment_id>', methods=['PUT'])
 @jwt_required()
+
 def update_appointment_status(appointment_id):
     current_user_email = get_jwt_identity()
     user = User.query.filter_by(email=current_user_email).first()
@@ -200,6 +215,7 @@ def update_appointment_status(appointment_id):
 
 @app.route('/admin/reports', methods=['GET'])
 @jwt_required()
+
 def get_reports():
     current_user_email = get_jwt_identity()
     user = User.query.filter_by(email=current_user_email).first()
@@ -296,10 +312,12 @@ def login():
 
 # 3. Obtener perfil
 @app.route('/profile', methods=['GET'])
-@jwt_required()
+#@jwt_required()
 def get_profile():
-    user_id = get_jwt_identity()
-    user = User.query.get(user_id)
+    #user_id = get_jwt_identity()
+    user_id = "elkin_rondon@hotmail.com"
+    #user = User.query.get(user_id)
+    user = User.query.filter_by(email=user_id).first()
     if not user:
         return jsonify({'msg': 'Usuario no encontrado'}), 404
     return jsonify({
@@ -426,7 +444,7 @@ def get_catalog():
 
 # 10. Dejar reseña
 @app.route('/review', methods=['POST'])
-@jwt_required()
+#@jwt_required()
 def leave_review():
     body = request.get_json()
     if 'appointment_id' not in body:
@@ -437,8 +455,8 @@ def leave_review():
         return jsonify({'msg': 'El campo review_description es obligatorio'}), 400
 
     appointment = Appointment.query.get(body['appointment_id'])
-    if not appointment or appointment.user_id != get_jwt_identity():
-        return jsonify({'msg': 'No autorizado o cita no válida'}), 403
+    #if not appointment or appointment.user_id != get_jwt_identity():
+    #    return jsonify({'msg': 'No autorizado o cita no válida'}), 403
 
     appointment.review = body['review']
     appointment.review_description = body['review_description']
@@ -447,7 +465,433 @@ def leave_review():
     
 
 
-# Main
+#-----------------------------END POINTS PARA EL BARBERO------------------------------------
+
+# Obtener todos los servicios pendientes ok
+@app.route('/stylist/pending_appoitments', methods=['GET'])
+#@jwt_required()
+def get_pending_appoitments():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca.karen28@gmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    appointments=Appointment.query.filter_by(stylist_id=user.id, status='pendiente')
+    
+    appointments_serialized=[]
+    
+    for appointments_aux in appointments:
+        appointments_serialized.append( appointments_aux.serialize())
+    
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
+
+# Obtener todos los servicios completados ok
+
+@app.route('/stylist/done_appointments/<int:userId>', methods=['GET'])
+#@jwt_required()
+def get_done_appointments(userId):
+    #current_user = get_jwt_identity()
+    current_user = "fonseca.karen28@gmail.com"
+    stylist = User.query.filter_by(email=current_user).first()
+
+    if stylist is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    appointments=Appointment.query.filter_by(user_id=userId, status='completada')
+    appointments_serialized=[]
+    
+    for appointments_aux in appointments:
+        appointments_serialized.append( appointments_aux.serialize())
+    
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
+
+# Obtener todos los servicios de una fecha
+
+@app.route('/stylist/appointments_date', methods=['GET'])
+#@jwt_required()
+def get_date_appoitments():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca.karen28@gmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+
+    appointments=Appointment.query.filter_by(stylist_id=user.id, status='pendiente')
+
+    if start_date and end_date:
+        appointments = appointments.filter(Appointment.date.between(start_date, end_date))
+   
+    appointments_serialized=[]
+
+    for appointments_aux in appointments:
+        appointments_serialized.append( appointments_aux.serialize())
+    
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
+
+
+#------------Actualizar estado de cita---------------------------------------ok
+
+@app.route('/stylist/appointments/<int:appointment_id>', methods=['PUT'])
+#@jwt_required()
+def update_stylist_appointment_status(appointment_id):
+    #current_user = get_jwt_identity()
+    current_user = "fonseca.karen28@gmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user.role == 'stylist':
+        return jsonify({"msg": "Acceso no autorizado",
+                        "role":user.serialize()}), 403
+
+    data = request.get_json()
+
+    if "status" not in data:
+        return jsonify({"msg": "Falta el campo 'status'"}), 400
+
+    appointment = Appointment.query.get(appointment_id)
+
+    if appointment is None:
+        return jsonify({"msg": "Cita no encontrada"}), 404
+
+    appointment.status = data["status"]
+    db.session.commit()
+
+
+    return jsonify({"msg": "Estado de la cita actualizado correctamente",
+                   "role":appointment.serialize()}), 200
+
+#----------------------------------Igresar imagen de Trabajo realizado-----------------
+@app.route('/stylist/apointment_item_update', methods=['PUT'])
+#@jwt_required()
+def update_stylist_appointment_item():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca.karen28@gmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user.role == 'stylist':
+        return jsonify({"msg": "Acceso no autorizado",
+                        "role":user.serialize()}), 403
+
+    data = request.get_json()
+
+    if "id" not in data:
+        return jsonify({"msg": "Falta el campo 'id'"}), 400
+    if "picture" not in data:
+        return jsonify({"msg": "Falta el campo 'picture'"}), 400
+
+    appointment_item = AppointmentList.query.get(data["id"])
+
+    if appointment_item is None:
+        return jsonify({"msg": "item no encontrado"}), 404
+
+    appointment_item.picture = data["picture"]
+    db.session.commit()
+
+
+    return jsonify({"msg": "Imagen del trabajo actualizada correctamente",
+                   "role":appointment_item.serialize()}), 200
+
+
+#-----------------------Crear una cita--------------------------------------- ok
+@app.route('/stylist/appointment', methods=['POST'])
+#@jwt_required()
+def create_appointment_Stylist():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca@gmail"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    data = request.get_json()
+    if "date" not in data:
+        return jsonify({"msg": "Faltan datos para crear la cita"}), 400 
+    
+    if "status" not in  data:
+        return jsonify({"msg": "Faltan datos para crear la cita"}), 400 
+    
+    if "user_id" not in data: 
+        return jsonify({"msg": "Faltan datos para crear la cita"}), 400 
+    
+    if "stylist_id" not in data:
+        return jsonify({"msg": "Faltan datos para crear la cita"}), 400
+
+    appointment = Appointment(
+        date=data["date"],
+        status=data["status"],
+        user_id=data["user_id"],
+        stylist_id=data["stylist_id"]
+    )
+
+    db.session.add(appointment)
+    db.session.commit()
+
+    return jsonify({"msg": "Cita creada correctamente",
+                    "apointment":appointment.serialize()}), 201
+
+#--------------------Crear Trabajo de Cita-------------------------------ok
+@app.route('/stylist/appointment_item', methods=['POST'])
+#@jwt_required()
+def create_appointment_item():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca@gmail"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    data = request.get_json()
+    if data is None:
+        return jsonify({"msg": "Debe enviar datos"}), 400
+
+    if "appointment_id" not in data:
+        return jsonify({"msg": "Faltan datos para crear la cita"}), 400
+    
+    if "work_type_id" not in data:
+        return jsonify({"msg": "Faltan datos para crear la cita"}), 400
+
+    appointment_item = AppointmentList(
+        appointment_id=data["appointment_id"],
+        work_type_id=data["work_type_id"]
+    )
+
+    db.session.add(appointment_item)
+    db.session.commit()
+
+    return jsonify({"msg": "Item creado correctamente",
+                    "work_type":appointment_item.serialize()}), 200
+
+#----------------------Obtener trabajos de una cita-------------------------------- ok
+@app.route('/stylist/appoitment_detail/<int:appointment_id>', methods=['GET'])
+#@jwt_required()
+def get_appoitment_detail(appointment_id):
+    #current_user = get_jwt_identity()
+    current_user = "fonseca.karen28@gmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    appointment_items=AppointmentList.query.filter_by(appointment_id=appointment_id)
+    appointment_items_serialized=[]
+  
+    for appointment_items_aux in appointment_items:
+        appointment_items_serialized.append( appointment_items_aux.work_type.serialize())
+    
+    return (jsonify({'msg':'Items listados con exito', 
+                     'items': appointment_items_serialized
+                     }
+                    )
+            )
+
+#--------------------------Obtener Info de todos Los Barberos---------------------------------
+
+@app.route('/admin/stylist_list', methods=['GET'])
+#@jwt_required()
+def get_stylistList():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca.karen28@gmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    stylistList=User.query.filter_by(role="stylist")
+    stylistList_serialized=[]
+  
+    for stylist in stylistList:
+        stylistList_serialized.append( stylist.serialize())
+    
+    return (jsonify({'msg':'Stylist listados con exito', 
+                     'items': stylistList_serialized
+                     }
+                    )
+            )
+
+#-----------------------------obtener info de barbero--------------------------------------ok 
+@app.route('/stylist/info', methods=['GET'])
+#@jwt_required()
+def get_stylist_info():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca@gmail"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+    
+    return (jsonify({'msg':'Barbero listado con exito', 
+                     'items': user.serialize()
+                     }
+                    )
+            )
+
+#------------Actualizar Info Barbero---------------------------------------ok
+
+@app.route('/stylist/update_info', methods=['PUT'])
+#@jwt_required()
+def update_stylist_update_info():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca@gmail"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    data = request.get_json()
+    
+    if "email" not in data:
+            return jsonify({"msg": "El Campo e-mail es obligatorio"}), 400
+    else:
+        user.email=data["email"]
+    if "nombre" in data: 
+        user.nombre=data["nombre"]
+    if "telefono" in data: 
+        user.telefono=data["telefono"]
+    if "sexo" in data: 
+        user.sexo=data["sexo"]
+    if "fecha_nacimiento" in data: 
+        user.fecha_nacimiento=data["fecha_nacimiento"]
+    if "role" in data:
+        user.role=data["role"]
+    if "picture" in data:
+        user.picture=data["picture"]
+
+    db.session.commit()
+
+    return jsonify({"msg": "Estado de la cita actualizado correctamente",
+                   "user":user.serialize()}), 200
+
+#-----------------------Crear una cita con items-------------------------------------- ok
+@app.route('/stylist/appointment_items', methods=['POST'])
+#@jwt_required()
+def create_appointment_items():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca.karen28@gmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    data = request.get_json()
+    if "date" not in data:
+        return jsonify({"msg": "la fecha es necesaria para crear la cita"}), 400 
+    
+    if "status" not in  data:
+        return jsonify({"msg": "El estado es necesario para crear la cita"}), 400 
+    
+    if "user_id" not in data: 
+        return jsonify({"msg": "El Usuario es necesari0 para crear la cita"}), 400 
+    
+    if "stylist_id" not in data:
+        return jsonify({"msg": "El estilista es necesario para crear la cita"}), 400
+    if "items" not in data:
+        return jsonify({"msg": "Se deben ingresar los trabajos"}), 400
+
+    appointment = Appointment(
+        date=data["date"],
+        status=data["status"],
+        user_id=data["user_id"],
+        stylist_id=data["stylist_id"]
+    )
+
+    db.session.add(appointment)
+    db.session.commit()
+
+    appointment_id= appointment.id
+    appointment_items_serialized=[]
+
+    for appointment_items_aux in data["items"]:
+        appointment_item = AppointmentList(appointment_id=appointment_id, 
+                                           work_type_id=appointment_items_aux
+                                           )
+        db.session.add(appointment_item)
+        db.session.commit()
+        appointment_items_serialized.append( appointment_item.work_type.serialize())
+    
+    return jsonify({"msg": "Item creado correctamente",
+                    "apointment":appointment.serialize(),
+                    "works":appointment_items_serialized}), 200
+
+#--------------------EndPoints de Usuario-----------------------------------
+
+@app.route('/user/pending_appointments', methods=['GET'])
+#@jwt_required()
+def get_user_pending_appointments():
+    #current_user = get_jwt_identity()
+    current_user = "elkin_rondon@hotmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    appointments=Appointment.query.filter_by(user_id=user.id, status='pendiente')
+    appointments_serialized=[]
+    
+    for appointments_aux in appointments:
+        appointments_serialized.append( appointments_aux.serialize())
+    
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
+
+@app.route('/user/done_appointments', methods=['GET'])
+#@jwt_required()
+def get_user_done_appointments():
+    #current_user = get_jwt_identity()
+    current_user = "elkin_rondon@hotmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    appointments=Appointment.query.filter_by(user_id=user.id, status='completada')
+    appointments_serialized=[]
+    
+    for appointments_aux in appointments:
+        appointments_serialized.append( appointments_aux.serialize())
+    
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
+
+
+@app.route('/admin/appointments_date', methods=['GET'])
+#@jwt_required()
+def get_all_date_appoitments():
+    #current_user = get_jwt_identity()
+    current_user = "fonseca.karen28@gmail.com"
+    user = User.query.filter_by(email=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+
+    appointments=Appointment.query.filter_by(status='pendiente')
+
+    if start_date and end_date:
+        appointments = appointments.filter(Appointment.date.between(start_date, end_date))
+   
+    appointments_serialized=[]
+
+    for appointments_aux in appointments:
+        appointments_serialized.append( appointments_aux.serialize())
+    
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
+
+
+
+# this only runs if `$ python src/main.py` is executed
+
 if __name__ == '__main__':
     PORT = int(os.environ.get('PORT', 3001))
     app.run(host='0.0.0.0', port=PORT, debug=True)
+

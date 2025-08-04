@@ -6,9 +6,19 @@ import {
     Route,
 } from "react-router-dom";
 import { Layout } from "./pages/Layout";
-import { Home } from "./pages/Home";
+import  Home  from "./pages/Home";
 import { Single } from "./pages/Single";
 import { Demo } from "./pages/Demo";
+import  Gallery  from "./pages/Gallery";
+import  Services  from "./pages/Services"; 
+import  Home_Stylist  from "./pages/Home_Stylist";
+import  Home_User  from "./pages/Home_User";
+import ContactUs from "./pages/ContactUs";
+import Appointment  from "./pages/Appointment";
+
+
+
+
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -25,6 +35,16 @@ export const router = createBrowserRouter(
         <Route path= "/" element={<Home />} />
         <Route path="/single/:theId" element={ <Single />} />  {/* Dynamic route for single items */}
         <Route path="/demo" element={<Demo />} />
+
+        <Route path="/services" element={<Services />} /> {/* Folder for Services page */}
+        <Route path="/Home_Stylist" element={<Home_Stylist />} />
+        <Route path="/Home_User" element={<Home_User />} />
+        <Route path="/gallery" element={<Gallery />} /> 
+        <Route path="/contact" element={<ContactUs />} /> {/* Contact Us page */}
+        <Route path="/appointment" element={<Appointment />} /> {/* Appointment page */}
+
+  
+
       </Route>
     )
 );
