@@ -2,7 +2,7 @@ import React from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import homeImage from "../assets/img/BeautySalon.jpg";
-import logo from "../assets/img/logo.webp";
+import logo from "../assets/img/logo1.jpg";  // .jpg instead of .png
 import { FaArrowRight } from "react-icons/fa";
 import "./Home.css";
 

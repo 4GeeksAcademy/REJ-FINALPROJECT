@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaUser, FaChevronDown, FaTimes, FaBars } from "react-icons/fa";
+import { FaUser, FaChevronDown, FaTimes, FaBars, FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import { useAuth } from './AuthContext';
 import logo from "../assets/img/logo1.jpg";
 
 const Navbar = () => {
+  const { isLoggedIn, login, logout } = useAuth();
   const [dropdownOpen, setDropdownOpen] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const location = useLocation();
+  const navigate = useNavigate();
 
   const toggleDropdown = () => setDropdownOpen(!dropdownOpen);
   const toggleMobileMenu = () => setMobileMenuOpen(!mobileMenuOpen);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 10);
-    };
+    const handleScroll = () => setScrolled(window.scrollY > 10);
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
@@ -26,7 +29,16 @@ const Navbar = () => {
     setDropdownOpen(false);
   }, [location]);
 
-  // Glass morphism effect
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      await login(email, password); // Asegúrate que tu AuthContext acepte estos parámetros
+      setDropdownOpen(false);
+    } catch (error) {
+      alert("Error al iniciar sesión: " + error.message);
+    }
+  };
+
   const glassStyle = {
     background: scrolled ? "rgba(167, 112, 108, 0.9)" : "rgba(167, 112, 108, 0.7)",
     backdropFilter: "blur(10px)",
@@ -36,7 +48,7 @@ const Navbar = () => {
   };
 
   return (
-    <motion.nav 
+    <motion.nav
       style={{
         ...glassStyle,
         position: "fixed",
@@ -55,18 +67,9 @@ const Navbar = () => {
       transition={{ duration: 0.5 }}
     >
       {/* Logo */}
-      <Link 
-        to="/" 
-        style={{ 
-          display: "flex", 
-          alignItems: "center", 
-          gap: "1rem",
-          textDecoration: "none",
-          zIndex: 1001
-        }}
-      >
-        <motion.img 
-          src={logo} 
+      <Link to="/" style={{ display: "flex", alignItems: "center", gap: "1rem", textDecoration: "none", zIndex: 1001 }}>
+        <motion.img
+          src={logo}
           alt="Beauty Salon Logo"
           style={{
             height: "50px",
@@ -91,14 +94,8 @@ const Navbar = () => {
       </Link>
 
       {/* Desktop Navigation */}
-      <div style={{ display: { xs: "none", md: "flex" } }}>
-        <ul style={{
-          display: "flex",
-          listStyle: "none",
-          gap: "2rem",
-          margin: 0,
-          padding: 0
-        }}>
+      <div style={{ display: "flex" }}>
+        <ul style={{ display: "flex", listStyle: "none", gap: "2rem", margin: 0, padding: 0 }}>
           {[
             { path: "/", name: "Home" },
             { path: "/services", name: "Services" },
@@ -159,30 +156,26 @@ const Navbar = () => {
           whileTap={{ scale: 0.95 }}
         >
           <FaUser />
-          <span>Sign In</span>
-          <motion.span
-            animate={{ rotate: dropdownOpen ? 180 : 0 }}
-            transition={{ duration: 0.2 }}
-          >
+          <span>{isLoggedIn ? "Account" : "Sign In"}</span>
+          <motion.span animate={{ rotate: dropdownOpen ? 180 : 0 }} transition={{ duration: 0.2 }}>
             <FaChevronDown size={14} />
           </motion.span>
         </motion.button>
 
         <AnimatePresence>
           {dropdownOpen && (
-            <motion.ul
+            <motion.div
               style={{
                 position: "absolute",
                 right: 0,
                 top: "100%",
                 marginTop: "0.5rem",
-                background: "rgba(255,255,255,0.9)",
+                background: "rgba(255,255,255,0.95)",
                 backdropFilter: "blur(10px)",
                 borderRadius: "12px",
-                padding: "0.5rem 0",
+                padding: "1.5rem",
                 boxShadow: "0 10px 30px rgba(0,0,0,0.1)",
-                listStyle: "none",
-                minWidth: "200px",
+                minWidth: "300px",
                 overflow: "hidden"
               }}
               initial={{ opacity: 0, y: -10 }}
@@ -190,62 +183,163 @@ const Navbar = () => {
               exit={{ opacity: 0, y: -10 }}
               transition={{ duration: 0.2 }}
             >
-              <li style={{ 
-                padding: "0.75rem 1.5rem",
-                color: "#5a4a42",
-                fontWeight: "600",
-                borderBottom: "1px solid rgba(0,0,0,0.05)"
-              }}>
-                User Name
-              </li>
-              {[
-                { path: "/profile", name: "Profile" },
-                { path: "/appointment", name: "My Appointments" },
-                { path: "/contact", name: "Contact Support" }
-              ].map((item) => (
-                <li key={item.path}>
-                  <Link
-                    to={item.path}
-                    style={{
-                      display: "block",
-                      padding: "0.75rem 1.5rem",
-                      color: "#5a4a42",
-                      textDecoration: "none",
-                      transition: "all 0.2s ease"
-                    }}
-                    whileHover={{ backgroundColor: "rgba(0,0,0,0.05)" }}
-                  >
-                    {item.name}
-                  </Link>
-                </li>
-              ))}
-              <li>
-                <button
-                  style={{
-                    width: "100%",
-                    textAlign: "left",
+              {!isLoggedIn ? (
+                <>
+                  <h4 style={{ marginBottom: "1rem", color: "#5a4a42", display: "flex", alignItems: "center", gap: "0.5rem" }}>
+                    <FaSignInAlt /> Iniciar Sesión
+                  </h4>
+                  <form onSubmit={handleLogin}>
+                    <div style={{ marginBottom: "1rem" }}>
+                      <input
+                        type="email"
+                        placeholder="Correo electrónico"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        style={{
+                          width: "100%",
+                          padding: "0.75rem",
+                          borderRadius: "8px",
+                          border: "1px solid #ddd",
+                          fontSize: "0.9rem"
+                        }}
+                        required
+                      />
+                    </div>
+                    <div style={{ marginBottom: "1.5rem" }}>
+                      <input
+                        type="password"
+                        placeholder="Contraseña"
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        style={{
+                          width: "100%",
+                          padding: "0.75rem",
+                          borderRadius: "8px",
+                          border: "1px solid #ddd",
+                          fontSize: "0.9rem"
+                        }}
+                        required
+                      />
+                    </div>
+                    <div style={{ display: "flex", gap: "0.75rem" }}>
+                      <motion.button
+                        type="submit"
+                        style={{
+                          flex: 1,
+                          background: "linear-gradient(90deg, #a7706c, #c58e7e)",
+                          color: "#fff",
+                          border: "none",
+                          padding: "0.75rem",
+                          borderRadius: "8px",
+                          cursor: "pointer",
+                          fontSize: "0.9rem",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "0.5rem"
+                        }}
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                      >
+                        <FaSignInAlt /> Ingresar
+                      </motion.button>
+                      <Link to="/contact#register" style={{ flex: 1, textDecoration: "none" }}>
+                        <motion.button
+                          type="button"
+                          style={{
+                            width: "100%",
+                            background: "transparent",
+                            color: "#5a4a42",
+                            border: "1px solid #5a4a42",
+                            padding: "0.75rem",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            fontSize: "0.9rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.5rem"
+                          }}
+                          whileHover={{ scale: 1.02, backgroundColor: "rgba(90, 74, 66, 0.1)" }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          <FaUserPlus /> Registrarse
+                        </motion.button>
+                      </Link>
+                    </div>
+                  </form>
+                </>
+              ) : (
+                <>
+                  <div style={{
                     padding: "0.75rem 1.5rem",
-                    background: "none",
-                    border: "none",
-                    color: "#ff4d4f",
-                    cursor: "pointer",
-                    fontWeight: "500"
-                  }}
-                  onClick={() => console.log("Logout")}
-                >
-                  Sign Out
-                </button>
-              </li>
-            </motion.ul>
+                    color: "#5a4a42",
+                    fontWeight: "600",
+                    borderBottom: "1px solid rgba(0,0,0,0.05)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "0.5rem"
+                  }}>
+                    <FaUser /> ¡Bienvenid@!
+                  </div>
+                  {[
+                    { path: "/profile", name: "Perfil", icon: <FaUser /> },
+                    { path: "/appointment", name: "Mis Citas", icon: <FaCalendarAlt /> },
+                    { path: "/contact", name: "Soporte", icon: <FaHeadset /> }
+                  ].map((item) => (
+                    <Link
+                      key={item.path}
+                      to={item.path}
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: "0.5rem",
+                        padding: "0.75rem 1.5rem",
+                        color: "#5a4a42",
+                        textDecoration: "none",
+                        transition: "all 0.2s ease",
+                        borderBottom: "1px solid rgba(0,0,0,0.05)"
+                      }}
+                      onClick={() => setDropdownOpen(false)}
+                    >
+                      {item.icon} {item.name}
+                    </Link>
+                  ))}
+                  <button
+                    onClick={() => {
+                      logout();
+                      setDropdownOpen(false);
+                    }}
+                    style={{
+                      width: "100%",
+                      textAlign: "left",
+                      padding: "0.75rem 1.5rem",
+                      background: "none",
+                      border: "none",
+                      color: "#ff4d4f",
+                      cursor: "pointer",
+                      fontWeight: "500",
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "0.5rem",
+                      marginTop: "0.5rem"
+                    }}
+                  >
+                    <FaSignOutAlt /> Cerrar Sesión
+                  </button>
+                </>
+              )}
+            </motion.div>
           )}
         </AnimatePresence>
       </div>
 
-      {/* Mobile Menu Button */}
+      {/* Mobile Menu Toggle */}
       <button
         onClick={toggleMobileMenu}
         style={{
-          display: { xs: "flex", md: "none" },
+          display: "none",
           background: "none",
           border: "none",
           color: "#fff",
@@ -256,71 +350,6 @@ const Navbar = () => {
       >
         {mobileMenuOpen ? <FaTimes /> : <FaBars />}
       </button>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {mobileMenuOpen && (
-          <motion.div
-            style={{
-              position: "fixed",
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: "rgba(167, 112, 108, 0.95)",
-              backdropFilter: "blur(10px)",
-              zIndex: 1000,
-              display: "flex",
-              flexDirection: "column",
-              justifyContent: "center",
-              alignItems: "center",
-              padding: "2rem"
-            }}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.3 }}
-          >
-            <ul style={{
-              listStyle: "none",
-              padding: 0,
-              margin: 0,
-              display: "flex",
-              flexDirection: "column",
-              gap: "2rem",
-              textAlign: "center"
-            }}>
-              {[
-                { path: "/", name: "Home" },
-                { path: "/services", name: "Services" },
-                { path: "/gallery", name: "Gallery" },
-                { path: "/appointment", name: "Appointment" },
-                { path: "/contact", name: "Contact" }
-              ].map((item) => (
-                <motion.li
-                  key={item.path}
-                  initial={{ y: 20, opacity: 0 }}
-                  animate={{ y: 0, opacity: 1 }}
-                  transition={{ delay: 0.1 }}
-                >
-                  <Link
-                    to={item.path}
-                    style={{
-                      color: location.pathname === item.path ? "#fff" : "rgba(255,255,255,0.8)",
-                      textDecoration: "none",
-                      fontSize: "1.5rem",
-                      fontWeight: "500"
-                    }}
-                    onClick={toggleMobileMenu}
-                  >
-                    {item.name}
-                  </Link>
-                </motion.li>
-              ))}
-            </ul>
-          </motion.div>
-        )}
-      </AnimatePresence>
     </motion.nav>
   );
 };

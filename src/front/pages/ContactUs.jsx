@@ -4,7 +4,8 @@ import homeImage from "../assets/img/BeautySalon.jpg";
 import { 
   FaFacebook, FaInstagram, FaTwitter, 
   FaPhone, FaEnvelope, FaMapMarkerAlt,
-  FaCheckCircle, FaUser, FaLock, FaCommentAlt
+  FaCheckCircle, FaUser, FaLock, FaCommentAlt,
+  FaArrowLeft
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Home.css";
@@ -22,6 +23,19 @@ const ContactUs = () => {
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
+
+  // Auto-scroll to register section if URL has #register
+  useEffect(() => {
+    if (window.location.hash === '#register') {
+      setActiveTab("register");
+      setTimeout(() => {
+        const element = document.getElementById('register');
+        if (element) {
+          element.scrollIntoView({ behavior: 'smooth' });
+        }
+      }, 300);
+    }
+  }, []);
 
   useEffect(() => {
     if (isSubmitting) {
@@ -48,10 +62,28 @@ const ContactUs = () => {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setProgress(0);
+    
+    try {
+      // Simulación de llamada a API
+      await new Promise(resolve => setTimeout(resolve, 2000));
+      setShowModal(true);
+      
+      // En producción, usarías:
+      // const response = await fetch('/api/register', {
+      //   method: 'POST',
+      //   headers: { 'Content-Type': 'application/json' },
+      //   body: JSON.stringify(formData)
+      // });
+      // if (!response.ok) throw new Error('Registration failed');
+    } catch (error) {
+      alert("Error: " + error.message);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const closeModal = () => {
@@ -70,7 +102,6 @@ const ContactUs = () => {
 
   return (
     <div style={{
-      ...containerStyle,
       background: "linear-gradient(135deg, #c58e7e 0%, #663f3d 100%)",
       minHeight: "100vh",
       padding: "2rem",
@@ -116,10 +147,26 @@ const ContactUs = () => {
         transition={{ duration: 0.5 }}
       >
         {/* Left side - Form */}
-        <div style={{
-          flex: 1,
-          color: "#fff"
-        }}>
+        <div style={{ flex: 1, color: "#fff" }}>
+          <motion.button
+            onClick={() => navigate(-1)}
+            style={{
+              background: "rgba(255,255,255,0.1)",
+              border: "none",
+              color: "#fff",
+              padding: "0.5rem 1rem",
+              borderRadius: "50px",
+              display: "flex",
+              alignItems: "center",
+              gap: "0.5rem",
+              marginBottom: "1.5rem",
+              cursor: "pointer"
+            }}
+            whileHover={{ background: "rgba(255,255,255,0.2)" }}
+          >
+            <FaArrowLeft /> Back
+          </motion.button>
+
           <motion.h1 
             style={{
               fontSize: "clamp(2rem, 5vw, 3.5rem)",
@@ -130,152 +177,212 @@ const ContactUs = () => {
               backgroundClip: "text",
               color: "transparent"
             }}
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.2 }}
           >
-            Join Beauty & Style
+            {activeTab === "contact" ? "Contact Us" : "Join Our Community"}
           </motion.h1>
 
-          {/* Animated tabs */}
-          <motion.div 
-            style={{
-              display: "flex",
-              gap: "1rem",
-              marginBottom: "2rem"
-            }}
-          >
+          {/* Tabs */}
+          <motion.div style={{ display: "flex", gap: "1rem", marginBottom: "2rem" }}>
             {["contact", "register"].map((tab) => (
               <motion.button
                 key={tab}
                 style={{
-                  ...tabButtonStyle,
+                  padding: "0.75rem 1.5rem",
+                  borderRadius: "50px",
                   background: activeTab === tab ? "rgba(255,255,255,0.3)" : "transparent",
-                  border: activeTab === tab ? "1px solid rgba(255,255,255,0.5)" : "1px solid rgba(255,255,255,0.2)"
+                  border: activeTab === tab ? "1px solid rgba(255,255,255,0.5)" : "1px solid rgba(255,255,255,0.2)",
+                  color: "#fff",
+                  cursor: "pointer",
+                  fontSize: "0.9rem",
+                  fontWeight: "500"
                 }}
                 onClick={() => setActiveTab(tab)}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
               >
-                {tab === "contact" ? "Contact Us" : "Create Account"}
+                {tab === "contact" ? "Contact Form" : "Create Account"}
               </motion.button>
             ))}
           </motion.div>
 
-          {activeTab === "contact" ? (
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <div style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
-                gap: "1.5rem",
-                marginBottom: "2rem"
-              }}>
-                <ContactItem icon={<FaPhone />} title="Phone" value="+1 (555) 123-4567" />
-                <ContactItem icon={<FaEnvelope />} title="Email" value="info@beautyandstyle.com" />
-                <ContactItem icon={<FaMapMarkerAlt />} title="Location" value="123 Beauty Ave, Cartago" />
-              </div>
-
-              <div style={{ marginBottom: "2rem" }}>
-                <h3 style={{ marginBottom: "1rem", fontWeight: "500" }}>Follow Us</h3>
-                <div style={{ display: "flex", gap: "1.5rem" }}>
-                  <SocialIcon icon={<FaFacebook />} color="#4267B2" />
-                  <SocialIcon icon={<FaInstagram />} color="#E1306C" />
-                  <SocialIcon icon={<FaTwitter />} color="#1DA1F2" />
-                </div>
-              </div>
-            </motion.div>
-          ) : (
-            <motion.form
-              onSubmit={handleSubmit}
-              style={formStyle}
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ duration: 0.3 }}
-            >
-              <FormField 
-                icon={<FaUser />}
-                type="text"
-                name="name"
-                value={formData.name}
-                onChange={handleChange}
-                placeholder="Full Name"
-                required
-              />
-              
-              <FormField 
-                icon={<FaEnvelope />}
-                type="email"
-                name="email"
-                value={formData.email}
-                onChange={handleChange}
-                placeholder="Email Address"
-                required
-              />
-              
-              <FormField 
-                icon={<FaPhone />}
-                type="tel"
-                name="phone"
-                value={formData.phone}
-                onChange={handleChange}
-                placeholder="Phone Number"
-                required
-              />
-              
-              <FormField 
-                icon={<FaLock />}
-                type="password"
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Create Password"
-                required
-              />
-              
-              <FormField 
-                icon={<FaCommentAlt />}
-                type="textarea"
-                name="message"
-                value={formData.message}
-                onChange={handleChange}
-                placeholder="Your Message (Optional)"
-              />
-
-              <motion.button
-                type="submit"
-                className="book-button"
-                style={{
-                  ...submitButtonStyle,
-                  position: "relative",
-                  overflow: "hidden"
-                }}
-                whileHover={{ scale: 1.02 }}
-                whileTap={{ scale: 0.98 }}
-                disabled={isSubmitting}
+          {/* Contact Tab */}
+          <AnimatePresence mode="wait">
+            {activeTab === "contact" ? (
+              <motion.div
+                key="contact"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
               >
-                {isSubmitting ? (
-                  <>
-                    <div style={{
-                      position: "absolute",
-                      top: 0,
-                      left: 0,
-                      height: "100%",
-                      width: `${progress}%`,
-                      background: "rgba(255,255,255,0.3)",
-                      transition: "width 0.3s ease"
-                    }} />
-                    <span>Creating Account... {progress}%</span>
-                  </>
-                ) : (
-                  "Create Account"
-                )}
-              </motion.button>
-            </motion.form>
-          )}
+                <div style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(auto-fit, minmax(250px, 1fr))",
+                  gap: "1.5rem",
+                  marginBottom: "2rem"
+                }}>
+                  <ContactItem icon={<FaPhone />} title="Phone" value="+1 (555) 123-4567" />
+                  <ContactItem icon={<FaEnvelope />} title="Email" value="info@beautyandstyle.com" />
+                  <ContactItem icon={<FaMapMarkerAlt />} title="Location" value="123 Beauty Ave, Cartago" />
+                </div>
+
+                <div style={{ marginBottom: "2rem" }}>
+                  <h3 style={{ marginBottom: "1rem", fontWeight: "500" }}>Follow Us</h3>
+                  <div style={{ display: "flex", gap: "1.5rem" }}>
+                    <SocialIcon icon={<FaFacebook />} color="#4267B2" />
+                    <SocialIcon icon={<FaInstagram />} color="#E1306C" />
+                    <SocialIcon icon={<FaTwitter />} color="#1DA1F2" />
+                  </div>
+                </div>
+
+                <form style={formStyle}>
+                  <FormField 
+                    icon={<FaUser />}
+                    type="text"
+                    name="name"
+                    placeholder="Your Name"
+                  />
+                  
+                  <FormField 
+                    icon={<FaEnvelope />}
+                    type="email"
+                    name="email"
+                    placeholder="Your Email"
+                  />
+                  
+                  <FormField 
+                    icon={<FaCommentAlt />}
+                    type="textarea"
+                    name="message"
+                    placeholder="Your Message"
+                  />
+
+                  <motion.button
+                    type="submit"
+                    style={submitButtonStyle}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                  >
+                    Send Message
+                  </motion.button>
+                </form>
+              </motion.div>
+            ) : (
+              <motion.div
+                key="register"
+                id="register"
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 20 }}
+                transition={{ duration: 0.3 }}
+                style={{
+                  background: "rgba(255,255,255,0.1)",
+                  padding: "2rem",
+                  borderRadius: "16px",
+                  backdropFilter: "blur(5px)",
+                  border: "1px solid rgba(255,255,255,0.2)"
+                }}
+              >
+                <h2 style={{ 
+                  fontSize: "1.5rem",
+                  marginBottom: "1.5rem",
+                  background: "linear-gradient(90deg, #fff, #f8d7d3)",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  color: "transparent"
+                }}>
+                  Create Your Account
+                </h2>
+                
+                <form onSubmit={handleSubmit} style={formStyle}>
+                  <FormField 
+                    icon={<FaUser />}
+                    type="text"
+                    name="name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    placeholder="Full Name"
+                    required
+                  />
+                  
+                  <FormField 
+                    icon={<FaEnvelope />}
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="Email Address"
+                    required
+                  />
+                  
+                  <FormField 
+                    icon={<FaPhone />}
+                    type="tel"
+                    name="phone"
+                    value={formData.phone}
+                    onChange={handleChange}
+                    placeholder="Phone Number"
+                  />
+                  
+                  <FormField 
+                    icon={<FaLock />}
+                    type="password"
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Create Password"
+                    required
+                  />
+
+                  <motion.button
+                    type="submit"
+                    style={{
+                      ...submitButtonStyle,
+                      position: "relative",
+                      overflow: "hidden"
+                    }}
+                    whileHover={{ scale: 1.02 }}
+                    whileTap={{ scale: 0.98 }}
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      <>
+                        <div style={{
+                          position: "absolute",
+                          top: 0,
+                          left: 0,
+                          height: "100%",
+                          width: `${progress}%`,
+                          background: "rgba(255,255,255,0.3)",
+                          transition: "width 0.3s ease"
+                        }} />
+                        <span>Creating Account... {progress}%</span>
+                      </>
+                    ) : (
+                      "Register Now"
+                    )}
+                  </motion.button>
+                </form>
+                
+                <p style={{ marginTop: "1.5rem", textAlign: "center" }}>
+                  Already have an account?{' '}
+                  <button 
+                    onClick={() => setActiveTab("contact")}
+                    style={{
+                      background: "none",
+                      border: "none",
+                      color: "#f8d7d3",
+                      textDecoration: "underline",
+                      cursor: "pointer",
+                      fontWeight: "500"
+                    }}
+                  >
+                    Contact us instead
+                  </button>
+                </p>
+              </motion.div>
+            )}
+          </AnimatePresence>
         </div>
 
         {/* Right side - Image */}
@@ -289,7 +396,8 @@ const ContactUs = () => {
             src={homeImage} 
             alt="Professional beauty salon" 
             style={{
-              ...imageStyle,
+              width: "100%",
+              maxWidth: "600px",
               borderRadius: "20px",
               boxShadow: "0 25px 50px -12px rgba(0, 0, 0, 0.3)",
               transform: "perspective(1000px) rotateY(10deg)"
@@ -304,7 +412,7 @@ const ContactUs = () => {
         </div>
       </motion.div>
 
-      {/* Futuristic Modal */}
+      {/* Success Modal */}
       <AnimatePresence>
         {showModal && (
           <motion.div
@@ -363,7 +471,6 @@ const ContactUs = () => {
               
               <motion.button
                 onClick={closeModal}
-                className="book-button"
                 style={modalButtonStyle}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
@@ -378,7 +485,7 @@ const ContactUs = () => {
   );
 };
 
-// Reusable components
+// Componentes reutilizables
 const ContactItem = ({ icon, title, value }) => (
   <motion.div 
     style={{
@@ -432,8 +539,12 @@ const FormField = ({ icon, type, ...props }) => (
     {type === "textarea" ? (
       <textarea
         style={{
-          ...inputStyle,
-          paddingLeft: "3rem",
+          width: "100%",
+          padding: "1rem 1rem 1rem 3rem",
+          background: "rgba(255,255,255,0.1)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          borderRadius: "12px",
+          color: "#fff",
           minHeight: "120px",
           resize: "none"
         }}
@@ -442,8 +553,12 @@ const FormField = ({ icon, type, ...props }) => (
     ) : (
       <input
         style={{
-          ...inputStyle,
-          paddingLeft: "3rem"
+          width: "100%",
+          padding: "1rem 1rem 1rem 3rem",
+          background: "rgba(255,255,255,0.1)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          borderRadius: "12px",
+          color: "#fff"
         }}
         type={type}
         {...props}
@@ -452,16 +567,7 @@ const FormField = ({ icon, type, ...props }) => (
   </div>
 );
 
-// Styles
-const containerStyle = {
-  display: "flex",
-  alignItems: "center",
-  justifyContent: "center",
-  minHeight: "100vh",
-  padding: "2rem",
-  position: "relative"
-};
-
+// Estilos
 const particlesContainer = {
   position: "absolute",
   top: 0,
@@ -480,32 +586,9 @@ const particleStyle = {
   height: "6px"
 };
 
-const tabButtonStyle = {
-  padding: "0.75rem 1.5rem",
-  borderRadius: "50px",
-  color: "#fff",
-  border: "none",
-  cursor: "pointer",
-  fontSize: "0.9rem",
-  fontWeight: "500",
-  transition: "all 0.3s ease"
-};
-
 const formStyle = {
   display: "flex",
   flexDirection: "column"
-};
-
-const inputStyle = {
-  width: "100%",
-  padding: "1rem",
-  background: "rgba(255,255,255,0.1)",
-  border: "1px solid rgba(255,255,255,0.2)",
-  borderRadius: "12px",
-  color: "#fff",
-  fontSize: "1rem",
-  outline: "none",
-  transition: "all 0.3s ease"
 };
 
 const submitButtonStyle = {
@@ -577,12 +660,5 @@ const modalButtonStyle = {
   margin: "0 auto",
   display: "block"
 };
-const imageStyle = {
-  width: "100%",
-  maxWidth: "600px",
-  borderRadius: "10px",
-  boxShadow: "0 15px 30px rgba(0,0,0,0.1)",
-};
-
 
 export default ContactUs;
