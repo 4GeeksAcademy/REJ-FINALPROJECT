@@ -15,6 +15,7 @@ import  Home_Stylist  from "./pages/Home_Stylist";
 import  Home_User  from "./pages/Home_User";
 import  Home_Admin  from "./pages/Home_Admin";
 import ContactUs from "./pages/ContactUs";
+import Appointment  from "./pages/Appointment";
 
 
 
@@ -40,6 +41,7 @@ export const router = createBrowserRouter(
         <Route path="/gallery" element={<Gallery />} /> 
         <Route path="/Home_Admin" element={<Home_Admin />} /> 
         <Route path="/contact" element={<ContactUs />} /> {/* Contact Us page */}
+        <Route path="/appointment" element={<Appointment />} /> {/* Appointment page */}
 
       </Route>
     )
