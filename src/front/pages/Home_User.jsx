@@ -259,7 +259,7 @@ const Home_User = () => {
 
 
   return (
-    <div className="containerStyle">
+    <div className="containerStyle mt-5">
 
       <div className="row text-center  " >
         <div className="col-4 ">

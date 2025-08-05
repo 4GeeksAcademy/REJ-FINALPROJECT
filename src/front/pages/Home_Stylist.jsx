@@ -1,7 +1,7 @@
 import React, { useState, useEffect }  from "react";
 import { useNavigate } from "react-router-dom";
 import "./Home.css";
-import Appointment from "../components/Appointment"
+import Appointment from "../components/Appointment_Stylist"
 import User_Card from "../components/User_Card";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
@@ -196,7 +196,7 @@ const Home_Stylist = () => {
 
 
   return (
-    <div className="containerStyle">
+    <div className="containerStyle mt-5">
       
       <div className="row text-center" style ={{ height:"50%"}}>
         <div className="col-4 ">
@@ -245,17 +245,17 @@ const Home_Stylist = () => {
         </div>
         <div className="col-6">
             <h2 className="columnTitleStyle">User History</h2>
-            <div className="row">
-                <div className="col-3 pt-1">
+            <div className="row carousel-style">
+                <div className="col-4 pt-1">
                   {doneAppointments.map((doneAppointment, index, array) => {
                      let review=doneAppointment.review +" Stars " + doneAppointment.review_description;
                       return (
-                        <button type="button" className="btn boton" onClick={() => setReview(doneAppointment.items,review)}>{doneAppointment.date}</button>
+                        <button type="button" className="btn modalButtonStyle my-1" onClick={() => setReview(doneAppointment.items,review)}>{doneAppointment.date}</button>
                       )
                     })
                   }
                   </div>
-                <div className="col-9 pt-1 ">
+                <div className="col-8 pt-1 ">
                      <Carousel doneItems={doneItems} />
                      <p><b>{reviewDescription}</b></p>
                 </div>

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import User_Card from "./User_Card";
+import User_Card from "./User_Card_Admin";
 
 const Carousel_Admin = ({stylists}) => {
     let contador_indicadores = 0;

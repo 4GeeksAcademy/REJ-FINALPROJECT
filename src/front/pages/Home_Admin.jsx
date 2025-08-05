@@ -1,5 +1,5 @@
 import React, { useState, useEffect }  from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , Link} from "react-router-dom";
 import "./Home.css";
 import Appointment_Admin from "../components/Appointment_Admin"
 import User_Card from "../components/User_Card";
@@ -134,7 +134,7 @@ const Home_Admin = () => {
 	},[selectedDate,workList])
 
   return (
-    <div className="containerStyle">
+    <div className="containerStyle mt-5">
       
       <div className="row text-center" style ={{ height:"50%"}}>
         <div className="col-3 ">
@@ -182,15 +182,15 @@ const Home_Admin = () => {
         <div className="col-3">
             <h2 className="columnTitleStyle">Users</h2>
            <div className="">
-                <button type="button" className="btn boton mx-2" data-bs-toggle="modal" data-bs-target={"#modalCreateUser"}>
+                <Link to="/CreateBarber" type="button" className="btn modalButtonStyle mx-2">
                         New User
-                    </button>
+                    </Link>
                   
            </div>
         </div>
         <div className="col-6">
             <h2 className="columnTitleStyle">Stylist List</h2>
-            <div className="row carousel-style">
+            <div className="row">
                 <Carousel_Admin stylists={stylistList} />
             </div>   
         </div> 

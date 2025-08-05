@@ -18,6 +18,8 @@ import Appointment  from "./pages/Appointment";
 import Appointment_User  from "./pages/Appointment_User";
 import Home_Admin  from "./pages/Home_Admin";
 import CreateBarber from "./pages/CreateBarber";
+import CrearBarbero from "./pages/CrearBarbero";
+import CrearUser from "./pages/CrearUser";
 
 
 export const router = createBrowserRouter(
@@ -45,7 +47,8 @@ export const router = createBrowserRouter(
         <Route path="/appointment_User" element={<Appointment_User />} /> {/* Appointment page */}
         <Route path="/Home_Admin" element={<Home_Admin />} />
         <Route path="/CreateBarber" element={<CreateBarber/>} /> {/* Placeholder for Create Barber page */}
-
+        <Route path="/CrearBarbero" element={<CrearBarbero/>} />
+        <Route path="/CrearUsuario" element={<CrearUser/>} />
  
       </Route>
     )
