@@ -9,7 +9,7 @@ import Carousel from "../components/Carousel";
 
 
 const Home_User = () => {
-  const api_URL = 'https://glorious-space-spork-pjwx47757q4936gjw-3001.app.github.dev/'
+  const api_URL = import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const [appointments, setAppointments] = useState([]);
   const [doneAppointments, setDoneAppointments] = useState([]);
@@ -22,6 +22,7 @@ const Home_User = () => {
   const [selectedDate, setSelectedDate] = useState(new Date())
   const [Disabled, setDisabled] = useState(false);
   const [stylist, setStylist] = useState(0);
+  const [workTypes, setWorkTypes] = useState([]);
 
   let duration = 0;
   let cost = 0;
@@ -182,12 +183,32 @@ const Home_User = () => {
 
   }
 
+  function getWorTypes() {
+    let url = api_URL + 'catalog'
+    fetch(url)
+      .then((response) => {
+        if (response.ok == false) {
+          throw new Error('Error al consultar Los Trabajos');
+        }
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+        setWorkTypes(data);
+      })
+      .catch((error) => {
+        alert(error)
+      })
+
+  }
+
 
   useEffect(() => {
     getUser();
     getDoneAppointments();
     getAppointments();
     getStylistList();
+    getWorTypes();
   }, [])
 
 
@@ -208,7 +229,7 @@ const Home_User = () => {
             <div className="col-4 pt-1">
               {doneAppointments.map((doneAppointment, index, array) => {
                 return (
-                  <div>
+                  <div className="m-2">
 
                     <button type="button" className="btn boton" onClick={() => setDoneItems(doneAppointment.items)}>{doneAppointment.date}</button>
                     <button type="button" className="btn boton mx-2" data-bs-toggle="modal" data-bs-target={"#modalEditAppointment-" + index}>
@@ -283,41 +304,62 @@ const Home_User = () => {
                 )
               })
               }
-              <button type="button" className="btn boton mx-2" data-bs-toggle="modal" data-bs-target={"#modalAddAppointment"}>
+              <button type="button" className="btn boton my-2" data-bs-toggle="modal" data-bs-target={"#modalAddAppointment"}>
                 Add Apointment
               </button>
             </div>
 
-            <div className="modal fade" id={"modalAddAppointment"} aria-labelledby="exampleModalLabel" aria-hidden="true">
-              <div className="modal-dialog ">
-                <div className="modal-content ">
+            <div className="modal fade " id={"modalAddAppointment"} aria-labelledby="exampleModalLabel" aria-hidden="true">
+              <div className="modal-dialog carousel-style">
+                <div className="modal-content modalStyle">
                   <div className="modal-header">
                     <h1 className="modal-title fs-5" id="exampleModalLabel">Add Appointment</h1>
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                   </div>
-                  <div className="modal-body">
+                  <div className="modal-body" style={{width:"90%"}}>
                     <div className="input-group mb-3">
                       <label htmlFor="user" className="input-group-text">User</label>
                       <input type="text" className="form-control" id="user" value={user.email} readOnly={true} />
                     </div>
-                    <div className="input-group mb-3">
+                    <div className="input-group mb-2">
                       <label htmlFor="stylist" className="input-group-text">Stylist</label>
                       <select className="form-select" id="stylist" >
                         {stylistList.map((stylist, index, array) => {
                           return (
                             <option value={stylist.id}>{stylist.nombre}</option>
-                          )
-                        })
+                            )
+                          })
                         }
                       </select>
                     </div>
                     <div className="input-group mb-3">
-                      <label htmlFor="date" className="input-group-text">Date</label>
-                      <DatePicker selected={selectedDate} onChange={(date) => setSelectedDate(date)} showTimeSelect id="date" style={{'width':'50px'}} />
+                        <DatePicker className="input-group-text" selected={selectedDate} onChange={(date) => setSelectedDate(date)}  showTimeSelect id="date"/>
                     </div>
 
                     <div className="m-1">
                       <h3 className="modal-title fs-5 my-2" id="exampleModalLabel">Work List</h3>
+                      <div className="input-group mb-2">
+                        <label htmlFor="items" className="input-group-text">Items</label>
+                        <select className="form-select" id="items" >
+                          {workTypes.map((work, index, array) => {
+                            return (
+                              <option value={work.id}>{work.description}</option>
+                              )
+                            })
+                          }
+                        </select>
+                        <button type="button" className="btn boton" onClick={() => addItem()}>Add</button>
+                    </div>
+                    
+
+<ul class="list-group">
+  <li class="list-group-item">An item</li>
+  <li class="list-group-item">A second item</li>
+  <li class="list-group-item">A third item</li>
+  <li class="list-group-item">A fourth item</li>
+  <li class="list-group-item">And a fifth one</li>
+</ul>
+
 
 
                     </div>

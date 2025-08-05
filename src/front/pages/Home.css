@@ -67,11 +67,11 @@
 .modalStyle  {
     align-items: center;
     justify-Content: space-between;
-    padding: 3rem;
+    padding: 0.5rem;
     background: linear-gradient(135deg, rgba(197, 142, 126, 0.9) 0%, rgba(102, 63, 61, 0.9) 100%);
     background-Repeat: no-repeat;
     background-Attachment: fixed;
-    width:300rem;
+    
 }
 
 .card {
