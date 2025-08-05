@@ -5,7 +5,7 @@ import {
   FaFacebook, FaInstagram, FaTwitter, 
   FaPhone, FaEnvelope, FaMapMarkerAlt,
   FaCheckCircle, FaUser, FaLock, FaCommentAlt,
-  FaArrowLeft
+  FaArrowLeft, FaVenusMars, FaCamera, FaUserCircle
 } from "react-icons/fa";
 import { motion, AnimatePresence } from "framer-motion";
 import "./Home.css";
@@ -18,11 +18,14 @@ const ContactUs = () => {
     email: "",
     phone: "",
     password: "",
-    message: ""
+    message: "",
+    gender: "",
+    photo: null
   });
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [photoPreview, setPhotoPreview] = useState(null);
 
   // Auto-scroll to register section if URL has #register
   useEffect(() => {
@@ -62,21 +65,41 @@ const ContactUs = () => {
     }));
   };
 
+  const handlePhotoChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setFormData(prev => ({ ...prev, photo: file }));
+      
+      // Create preview
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setPhotoPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     setIsSubmitting(true);
     setProgress(0);
     
     try {
-      // Simulación de llamada a API
+      // Simulación de envío de formulario con foto
+      const formDataToSend = new FormData();
+      for (const key in formData) {
+        if (formData[key] !== null && formData[key] !== "") {
+          formDataToSend.append(key, formData[key]);
+        }
+      }
+
       await new Promise(resolve => setTimeout(resolve, 2000));
       setShowModal(true);
       
-      // En producción, usarías:
+      // En producción:
       // const response = await fetch('/api/register', {
       //   method: 'POST',
-      //   headers: { 'Content-Type': 'application/json' },
-      //   body: JSON.stringify(formData)
+      //   body: formDataToSend
       // });
       // if (!response.ok) throw new Error('Registration failed');
     } catch (error) {
@@ -295,6 +318,51 @@ const ContactUs = () => {
                 </h2>
                 
                 <form onSubmit={handleSubmit} style={formStyle}>
+                  {/* Photo Preview */}
+                  {photoPreview && (
+                    <div style={{ display: "flex", justifyContent: "center", marginBottom: "1rem" }}>
+                      <img 
+                        src={photoPreview} 
+                        alt="Preview" 
+                        style={{ 
+                          width: "100px", 
+                          height: "100px", 
+                          borderRadius: "50%", 
+                          objectFit: "cover",
+                          border: "2px solid rgba(255,255,255,0.3)"
+                        }} 
+                      />
+                    </div>
+                  )}
+
+                  {/* Photo Upload */}
+                  <div style={{ marginBottom: "1.5rem" }}>
+                    <label htmlFor="photo" style={{ 
+                      color: "#fff", 
+                      marginBottom: "0.5rem", 
+                      display: "flex", 
+                      alignItems: "center",
+                      justifyContent: "center"
+                    }}>
+                      <FaCamera style={{ marginRight: "0.5rem" }} /> 
+                      {photoPreview ? "Change Photo" : "Upload Profile Photo"}
+                    </label>
+                    <input 
+                      type="file" 
+                      id="photo"
+                      accept="image/*"
+                      onChange={handlePhotoChange}
+                      style={{
+                        width: "100%",
+                        padding: "0.5rem",
+                        background: "rgba(255,255,255,0.1)",
+                        border: "1px solid rgba(255,255,255,0.2)",
+                        borderRadius: "12px",
+                        color: "#fff"
+                      }}
+                    />
+                  </div>
+
                   <FormField 
                     icon={<FaUser />}
                     type="text"
@@ -322,6 +390,22 @@ const ContactUs = () => {
                     value={formData.phone}
                     onChange={handleChange}
                     placeholder="Phone Number"
+                  />
+                  
+                  <FormField 
+                    icon={<FaVenusMars />}
+                    type="select"
+                    name="gender"
+                    value={formData.gender}
+                    onChange={handleChange}
+                    required
+                    options={[
+                      { value: "", label: "Select Gender" },
+                      { value: "male", label: "Male" },
+                      { value: "female", label: "Female" },
+                      { value: "other", label: "Other" },
+                      { value: "prefer-not-to-say", label: "Prefer not to say" }
+                    ]}
                   />
                   
                   <FormField 
@@ -451,6 +535,23 @@ const ContactUs = () => {
                 Your account has been successfully created. We've sent a confirmation to {formData.email}.
               </p>
               
+              {photoPreview && (
+                <div style={{ margin: "1rem 0" }}>
+                  <p>Your profile photo:</p>
+                  <img 
+                    src={photoPreview} 
+                    alt="Profile Preview" 
+                    style={{ 
+                      width: "100px", 
+                      height: "100px", 
+                      borderRadius: "50%", 
+                      objectFit: "cover",
+                      border: "2px solid #a7706c"
+                    }} 
+                  />
+                </div>
+              )}
+              
               <div style={{
                 background: "rgba(255,255,255,0.1)",
                 padding: "1.5rem",
@@ -525,13 +626,13 @@ const SocialIcon = ({ icon, color }) => (
   </motion.div>
 );
 
-const FormField = ({ icon, type, ...props }) => (
+const FormField = ({ icon, type, options, ...props }) => (
   <div style={{ marginBottom: "1.5rem", position: "relative" }}>
     <div style={{
       position: "absolute",
       left: "1rem",
-      top: "50%",
-      transform: "translateY(-50%)",
+      top: type === 'textarea' ? '1rem' : '50%',
+      transform: type === 'textarea' ? 'none' : 'translateY(-50%)',
       color: "rgba(255,255,255,0.7)"
     }}>
       {icon}
@@ -550,6 +651,25 @@ const FormField = ({ icon, type, ...props }) => (
         }}
         {...props}
       />
+    ) : type === "select" ? (
+      <select
+        style={{
+          width: "100%",
+          padding: "1rem 1rem 1rem 3rem",
+          background: "rgba(255,255,255,0.1)",
+          border: "1px solid rgba(255,255,255,0.2)",
+          borderRadius: "12px",
+          color: "#fff",
+          appearance: "none"
+        }}
+        {...props}
+      >
+        {options.map(option => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
     ) : (
       <input
         style={{
@@ -661,4 +781,4 @@ const modalButtonStyle = {
   display: "block"
 };
 
-export default ContactUs; 
+export default ContactUs;
