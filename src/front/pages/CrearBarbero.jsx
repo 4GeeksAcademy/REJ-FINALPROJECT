@@ -131,6 +131,16 @@ const CrearBarbero = () => {
 
                 <div className="carousel-style mx-5 text-center" style={{ width: "50rem" }}>
                     <h1 className="titulo" id="exampleModalLabel">Create Barber</h1>
+                    
+                <div className="m-1">
+
+                            <div className="my-2">
+                                <label htmlFor="file" className="input-group-text my-1">Picture</label>
+                                <input type="file" className="form-control" id="file"
+                                    onChange={fileChange} />
+                            </div>
+
+                        </div>
 
                     <div className="modal-body">
                         <div className="input-group mb-3">
@@ -158,15 +168,7 @@ const CrearBarbero = () => {
                                 <option value="Other">Other</option>
                             </select>
                         </div>
-                        <div className="m-1">
-
-                            <div className="my-2">
-                                <label htmlFor="file" className="input-group-text my-1">Picture</label>
-                                <input type="file" className="form-control" id="file"
-                                    onChange={fileChange} />
-                            </div>
-
-                        </div>
+                        
                     </div>
 
                     <button type="button" className="btn modalButtonStyle"

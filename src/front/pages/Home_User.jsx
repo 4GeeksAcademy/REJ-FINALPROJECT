@@ -120,8 +120,10 @@ const Home_User = () => {
     console.log(user_objeto);
     getDoneAppointments(user_objeto.id);
 
-    fetch("https://glorious-space-spork-pjwx47757q4936gjw-3001.app.github.dev/stylist/appoitment_detail/" + indice)
-      .then((response) => {
+    
+    let url = api_URL + "stylist/appoitment_detail"+ user_objeto.id
+    fetch(url)
+    .then((response) => {
         console.log(response);
         if (response.ok == false) {
           throw new Error('Error al consultar Las Citas');

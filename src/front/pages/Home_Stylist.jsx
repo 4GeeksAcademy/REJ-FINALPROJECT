@@ -32,12 +32,12 @@ const Home_Stylist = () => {
   function getAppointments(){
     
     let day = selectedDate.getDate();
-    let month = selectedDate.getMonth()+1;
+    let month = selectedDate.getMonth();
     let year = selectedDate.getFullYear();
     let end_date= new Date();
     end_date.setDate(selectedDate.getDate()+1);
     let end_day = end_date.getDate();
-    let end_month = end_date.getMonth()+1;
+    let end_month = end_date.getMonth();
     let end_year = end_date.getFullYear();
     
     let start_date =year+'-'+month+'-'+day;

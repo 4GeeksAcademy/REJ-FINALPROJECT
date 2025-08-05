@@ -267,6 +267,78 @@ const Navbar = () => {
                           <FaUserPlus /> Registrarse
                         </motion.button>
                       </Link>
+                      <Link to="/Home_Admin" style={{ flex: 1, textDecoration: "none" }}>
+                        <motion.button
+                          type="button"
+                          style={{
+                            width: "100%",
+                            background: "transparent",
+                            color: "#5a4a42",
+                            border: "1px solid #5a4a42",
+                            padding: "0.75rem",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            fontSize: "0.9rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.5rem"
+                          }}
+                          whileHover={{ scale: 1.02, backgroundColor: "rgba(90, 74, 66, 0.1)" }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          <FaUserPlus /> Admin
+                        </motion.button>
+                      </Link>
+                      <Link to="/Home_Stylist" style={{ flex: 1, textDecoration: "none" }}>
+                        <motion.button
+                          type="button"
+                          style={{
+                            width: "100%",
+                            background: "transparent",
+                            color: "#5a4a42",
+                            border: "1px solid #5a4a42",
+                            padding: "0.75rem",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            fontSize: "0.9rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.5rem"
+                          }}
+                          whileHover={{ scale: 1.02, backgroundColor: "rgba(90, 74, 66, 0.1)" }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          <FaUserPlus /> Stylist
+                        </motion.button>
+                      </Link>
+                      <Link to="/Home_User" style={{ flex: 1, textDecoration: "none" }}>
+                        <motion.button
+                          type="button"
+                          style={{
+                            width: "100%",
+                            background: "transparent",
+                            color: "#5a4a42",
+                            border: "1px solid #5a4a42",
+                            padding: "0.75rem",
+                            borderRadius: "8px",
+                            cursor: "pointer",
+                            fontSize: "0.9rem",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            gap: "0.5rem"
+                          }}
+                          whileHover={{ scale: 1.02, backgroundColor: "rgba(90, 74, 66, 0.1)" }}
+                          whileTap={{ scale: 0.98 }}
+                          onClick={() => setDropdownOpen(false)}
+                        >
+                          <FaUserPlus /> User
+                        </motion.button>
+                      </Link>
                     </div>
                   </form>
                 </>
