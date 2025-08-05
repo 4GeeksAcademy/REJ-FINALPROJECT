@@ -17,6 +17,8 @@ import ContactUs from "./pages/ContactUs";
 import Appointment  from "./pages/Appointment";
 import Appointment_User  from "./pages/Appointment_User";
 import Home_Admin  from "./pages/Home_Admin";
+import CreateBarber from "./pages/CreateBarber";
+
 
 export const router = createBrowserRouter(
     createRoutesFromElements(
@@ -42,6 +44,9 @@ export const router = createBrowserRouter(
         <Route path="/appointment" element={<Appointment />} /> {/* Appointment page */}
         <Route path="/appointment_User" element={<Appointment_User />} /> {/* Appointment page */}
         <Route path="/Home_Admin" element={<Home_Admin />} />
+        <Route path="/CreateBarber" element={<CreateBarber/>} /> {/* Placeholder for Create Barber page */}
+
+ 
       </Route>
     )
 );
