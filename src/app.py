@@ -67,7 +67,7 @@ def sitemap():
         return generate_sitemap(app)
     return send_from_directory(static_file_dir, 'index.html')
 
-@app.route('/<path:path>', methods=['GET'])
+@app.route('/api/<path:path>', methods=['GET'])
 def serve_any_other_file(path):
     if not os.path.isfile(os.path.join(static_file_dir, path)):
         path = 'index.html'
@@ -77,7 +77,7 @@ def serve_any_other_file(path):
 
 # ------------------- Administrador -------------------
 
-@app.route('/admin/dashboard', methods=['GET'])
+@app.route('/api/admin/dashboard', methods=['GET'])
 @jwt_required()
 def admin_dashboard():
     current_user_email = get_jwt_identity()
@@ -106,7 +106,7 @@ def admin_dashboard():
 
     return jsonify(summary), 200
 
-@app.route('/admin/services', methods=['GET'])
+@app.route('/api/admin/services', methods=['GET'])
 @jwt_required()
 def get_services():
     user_email = get_jwt_identity()
@@ -125,7 +125,7 @@ def get_services():
 
     return jsonify(services_list), 200
 
-@app.route('/admin/services', methods=['POST'])
+@app.route('/api/admin/services', methods=['POST'])
 @jwt_required()
 def create_service():
     user_email = get_jwt_identity()
@@ -144,7 +144,7 @@ def create_service():
     db.session.commit()
     return jsonify({"msg": "Servicio creado correctamente"}), 201
        
-@app.route('/admin/services/<int:service_id>', methods=['PUT'])
+@app.route('/api/admin/services/<int:service_id>', methods=['PUT'])
 @jwt_required()
 def update_service(service_id):
     user_email = get_jwt_identity()
@@ -166,7 +166,7 @@ def update_service(service_id):
 
     return jsonify({"msg": "Servicio actualizado"}), 200
 
-@app.route('/admin/services/<int:service_id>', methods=['DELETE'])
+@app.route('/api/admin/services/<int:service_id>', methods=['DELETE'])
 @jwt_required()
 
 def delete_service(service_id):
@@ -186,7 +186,7 @@ def delete_service(service_id):
 
     return jsonify({"msg": "Servicio eliminado correctamente"}), 200
 
-@app.route('/admin/users', methods=['GET'])
+@app.route('/api/admin/users', methods=['GET'])
 @jwt_required()
 
 def get_all_users():
@@ -201,7 +201,7 @@ def get_all_users():
 
     return jsonify(users_list), 200
 
-@app.route('/admin/appointments/<int:appointment_id>', methods=['PUT'])
+@app.route('/api/admin/appointments/<int:appointment_id>', methods=['PUT'])
 @jwt_required()
 
 def update_appointment_status(appointment_id):
@@ -225,7 +225,7 @@ def update_appointment_status(appointment_id):
 
     return jsonify({"msg": "Estado de la cita actualizado correctamente"}), 200
 
-@app.route('/admin/reports', methods=['GET'])
+@app.route('/api/admin/reports', methods=['GET'])
 @jwt_required()
 
 def get_reports():
@@ -258,7 +258,7 @@ def get_reports():
 # ------------------- Usuario -------------------
 
 #1. Registro 
-@app.route('/register', methods=['POST'])
+@app.route('/api/register', methods=['POST'])
 def register():
     body = request.get_json()
 
@@ -305,7 +305,7 @@ def register():
         return jsonify({'msg': 'Error al registrar usuario'}), 500
     
 # 2. Login
-@app.route('/login', methods=['POST'])
+@app.route('/api/login', methods=['POST'])
 def login():
     body = request.get_json()
     if not body:
@@ -323,7 +323,7 @@ def login():
     return jsonify({'token': token}), 200
 
 # 3. Obtener perfil
-@app.route('/profile', methods=['GET'])
+@app.route('/api/profile', methods=['GET'])
 #@jwt_required()
 def get_profile():
     #user_id = get_jwt_identity()
@@ -344,7 +344,7 @@ def get_profile():
     }), 200
 
 # 4. Actualizar perfil
-@app.route('/profile', methods=['PUT'])
+@app.route('/api/profile', methods=['PUT'])
 @jwt_required()
 def update_profile():
     user_id = get_jwt_identity()
@@ -363,7 +363,7 @@ def update_profile():
     return jsonify({'msg': 'Perfil actualizado correctamente'}), 200
 
 # 5. Ver citas del usuario
-@app.route('/appointments', methods=['GET'])
+@app.route('/api/appointments', methods=['GET'])
 @jwt_required()
 def get_appointments():
     user_id = get_jwt_identity()
@@ -381,7 +381,7 @@ def get_appointments():
     return jsonify(results), 200
 
 # 6. Agendar cita
-@app.route('/appointments', methods=['POST'])
+@app.route('/api/appointments', methods=['POST'])
 @jwt_required()
 def create_appointment():
     body = request.get_json()
@@ -408,7 +408,7 @@ def create_appointment():
         return jsonify({'msg': 'Error al agendar cita'}), 500
 
 # 7. Modificar cita
-@app.route('/appointments/<int:id>', methods=['PUT'])
+@app.route('/api/appointments/<int:id>', methods=['PUT'])
 @jwt_required()
 def update_appointment(id):
     appointment = Appointment.query.get(id)
@@ -427,7 +427,7 @@ def update_appointment(id):
     return jsonify({'msg': 'Cita actualizada'}), 200
 
 # 8. Cancelar cita
-@app.route('/appointments/<int:id>', methods=['DELETE'])
+@app.route('/api/appointments/<int:id>', methods=['DELETE'])
 @jwt_required()
 def delete_appointment(id):
     appointment = Appointment.query.get(id)
@@ -442,7 +442,7 @@ def delete_appointment(id):
     return jsonify({'msg': 'Cita cancelada correctamente'}), 200
 
 # 9. Ver catálogo de servicios
-@app.route('/catalog', methods=['GET'])
+@app.route('/api/catalog', methods=['GET'])
 def get_catalog():
     services = WorkType.query.all()
     result = []
@@ -456,7 +456,7 @@ def get_catalog():
     return jsonify(result), 200
 
 # 10. Dejar reseña
-@app.route('/review', methods=['POST'])
+@app.route('/api/review', methods=['POST'])
 #@jwt_required()
 def leave_review():
     body = request.get_json()
@@ -481,7 +481,7 @@ def leave_review():
 #-----------------------------END POINTS PARA EL BARBERO------------------------------------
 
 # Obtener todos los servicios pendientes ok
-@app.route('/stylist/pending_appoitments', methods=['GET'])
+@app.route('/api/stylist/pending_appoitments', methods=['GET'])
 #@jwt_required()
 def get_pending_appoitments():
     #current_user = get_jwt_identity()
@@ -503,7 +503,7 @@ def get_pending_appoitments():
 
 # Obtener todos los servicios completados ok
 
-@app.route('/stylist/done_appointments/<int:userId>', methods=['GET'])
+@app.route('/api/stylist/done_appointments/<int:userId>', methods=['GET'])
 #@jwt_required()
 def get_done_appointments(userId):
     #current_user = get_jwt_identity()
@@ -524,7 +524,7 @@ def get_done_appointments(userId):
 
 # Obtener todos los servicios de una fecha
 
-@app.route('/stylist/appointments_date', methods=['GET'])
+@app.route('/api/stylist/appointments_date', methods=['GET'])
 #@jwt_required()
 def get_date_appoitments():
     #current_user = get_jwt_identity()
@@ -552,7 +552,7 @@ def get_date_appoitments():
 
 # Obtener todos los servicios de una fecha
 
-@app.route('/admin/appointments_date', methods=['GET'])
+@app.route('/api/admin/appointments_date', methods=['GET'])
 #@jwt_required()
 def get_admin_date_appoitments():
     #current_user = get_jwt_identity()
@@ -581,7 +581,7 @@ def get_admin_date_appoitments():
 
 #------------Actualizar estado de cita---------------------------------------ok
 
-@app.route('/stylist/appointments/<int:appointment_id>', methods=['PUT'])
+@app.route('/api/stylist/appointments/<int:appointment_id>', methods=['PUT'])
 #@jwt_required()
 def update_stylist_appointment_status(appointment_id):
     #current_user = get_jwt_identity()
@@ -610,7 +610,7 @@ def update_stylist_appointment_status(appointment_id):
                    "role":appointment.serialize()}), 200
 
 #----------------------------------Igresar imagen de Trabajo realizado-----------------
-@app.route('/stylist/apointment_item_update', methods=['PUT'])
+@app.route('/api/stylist/apointment_item_update', methods=['PUT'])
 #@jwt_required()
 def update_stylist_appointment_item():
     #current_user = get_jwt_identity()
@@ -642,7 +642,7 @@ def update_stylist_appointment_item():
 
 
 #-----------------------Crear una cita--------------------------------------- ok
-@app.route('/stylist/appointment', methods=['POST'])
+@app.route('/api/stylist/appointment', methods=['POST'])
 #@jwt_required()
 def create_appointment_Stylist():
     #current_user = get_jwt_identity()
@@ -679,7 +679,7 @@ def create_appointment_Stylist():
                     "apointment":appointment.serialize()}), 201
 
 #--------------------Crear Trabajo de Cita-------------------------------ok
-@app.route('/stylist/appointment_item', methods=['POST'])
+@app.route('/api/stylist/appointment_item', methods=['POST'])
 #@jwt_required()
 def create_appointment_item():
     #current_user = get_jwt_identity()
@@ -711,7 +711,7 @@ def create_appointment_item():
                     "work_type":appointment_item.serialize()}), 200
 
 #----------------------Obtener trabajos de una cita-------------------------------- ok
-@app.route('/stylist/appoitment_detail/<int:appointment_id>', methods=['GET'])
+@app.route('/api/stylist/appoitment_detail/<int:appointment_id>', methods=['GET'])
 #@jwt_required()
 def get_appoitment_detail(appointment_id):
     #current_user = get_jwt_identity()
@@ -735,7 +735,7 @@ def get_appoitment_detail(appointment_id):
 
 #--------------------------Obtener Info de todos Los Barberos---------------------------------
 
-@app.route('/admin/stylist_list', methods=['GET'])
+@app.route('/api/admin/stylist_list', methods=['GET'])
 #@jwt_required()
 def get_stylistList():
     #current_user = get_jwt_identity()
@@ -758,7 +758,7 @@ def get_stylistList():
             )
 
 #-----------------------------obtener info de barbero--------------------------------------ok 
-@app.route('/stylist/info', methods=['GET'])
+@app.route('/api/stylist/info', methods=['GET'])
 #@jwt_required()
 def get_stylist_info():
     #current_user = get_jwt_identity()
@@ -776,7 +776,7 @@ def get_stylist_info():
 
 #------------Actualizar Info Barbero---------------------------------------ok
 
-@app.route('/stylist/update_info', methods=['PUT'])
+@app.route('/api/stylist/update_info', methods=['PUT'])
 #@jwt_required()
 def update_stylist_update_info():
     #current_user = get_jwt_identity()
@@ -811,7 +811,7 @@ def update_stylist_update_info():
                    "user":user.serialize()}), 200
 
 #-----------------------Crear una cita con items-------------------------------------- ok
-@app.route('/stylist/appointment_items', methods=['POST'])
+@app.route('/api/stylist/appointment_items', methods=['POST'])
 #@jwt_required()
 def create_appointment_items():
     #current_user = get_jwt_identity()
@@ -863,7 +863,7 @@ def create_appointment_items():
 
 #--------------------EndPoints de Usuario-----------------------------------
 
-@app.route('/user/pending_appointments', methods=['GET'])
+@app.route('/api/user/pending_appointments', methods=['GET'])
 #@jwt_required()
 def get_user_pending_appointments():
     #current_user = get_jwt_identity()
@@ -882,7 +882,7 @@ def get_user_pending_appointments():
     return jsonify({"msg": "Citas Listadas correctamente",
                    "appointments": appointments_serialized}), 200
 
-@app.route('/user/done_appointments', methods=['GET'])
+@app.route('/api/user/done_appointments', methods=['GET'])
 #@jwt_required()
 def get_user_done_appointments():
     #current_user = get_jwt_identity()
@@ -906,7 +906,7 @@ from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_requir
 
 
 #Solicitar recuperación de contraseña
-@app.route('/forgot-password', methods=['POST'])
+@app.route('/api/forgot-password', methods=['POST'])
 def forgot_password():
     email = request.json.get('email')
     if not email:
@@ -936,7 +936,7 @@ def forgot_password():
 
 
 #Cambiar contraseña usando token
-@app.route('/reset-password', methods=['POST'])
+@app.route('/api/reset-password', methods=['POST'])
 @jwt_required()
 def reset_password():
     new_password = request.json.get('password')
