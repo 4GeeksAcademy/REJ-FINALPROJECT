@@ -13,6 +13,7 @@ import "./Home.css";
 const ContactUs = () => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState("contact");
+  const [pictureUrl, setPictureUrl]= useState("");
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -22,6 +23,7 @@ const ContactUs = () => {
     gender: "",
     photo: null
   });
+
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
@@ -39,6 +41,36 @@ const ContactUs = () => {
       }, 300);
     }
   }, []);
+
+  function ImageUpload(id,file) {
+    console.log(pictureUrl);
+    const formData = new FormData();
+    formData.append('file', file);
+    formData.append('upload_preset', import.meta.env.VITE_CLOUDINARY_PRESET); 
+    formData.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY);
+    formData.append('cloud_name', import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
+    
+    let url = "https://api.cloudinary.com/v1_1/"+import.meta.env.VITE_CLOUDINARY_CLOUD_NAME+"/image/upload";
+    
+    fetch(url,{
+			            method:"POST",
+			            body: formData,
+			          
+		})
+			.then((response)=>{
+				return response.json();
+			})
+			.then((data)=>{
+				setPictureUrl(id,data.secure_url);
+			})
+			.catch(()=>{
+				alert(error)
+			})
+
+    
+    }
+
+
 
   useEffect(() => {
     if (isSubmitting) {
@@ -413,6 +445,16 @@ const ContactUs = () => {
                     type="password"
                     name="password"
                     value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Create Password"
+                    required
+                  />
+
+                  <FormField 
+                    icon={<FaLock />}
+                    type="file"
+                    name="file"
+                    value={formData.picture}
                     onChange={handleChange}
                     placeholder="Create Password"
                     required

@@ -243,7 +243,7 @@ const Navbar = () => {
                       >
                         <FaSignInAlt /> Ingresar
                       </motion.button>
-                      <Link to="/contact#register" style={{ flex: 1, textDecoration: "none" }}>
+                      <Link to="/CrearUsuario" style={{ flex: 1, textDecoration: "none" }}>
                         <motion.button
                           type="button"
                           style={{

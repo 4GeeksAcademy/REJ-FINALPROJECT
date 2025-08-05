@@ -62,11 +62,11 @@ const Appointment = ({ appointment, viewAppointment, editAppointment, index }) =
                     >
                         Edit
                     </button>
+                    
+                    <div className="modal fade " id={"modalEditAppointment-"+index}aria-labelledby="exampleModalLabel" aria-hidden="true">
+                        <div className="modal-dialog carousel-style">
+                            <div className="modal-content ">
 
-                    {/* Edit Appointment Modal */}
-                    <div className="modal fade" id={`modalEditAppointment-${index}`} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div className="modal-dialog">
-                            <div className="modal-content">
                                 <div className="modal-header">
                                     <h1 className="modal-title fs-5" id="exampleModalLabel">Edit Appointment</h1>
                                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>

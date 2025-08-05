@@ -1,5 +1,5 @@
 import React, { useState, useEffect }  from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate , Link} from "react-router-dom";
 import "./Home.css";
 import Appointment_Admin from "../components/Appointment_Admin"
 import User_Card from "../components/User_Card";
@@ -9,7 +9,7 @@ import Carousel_Admin from "../components/Carousel_Admin";
 
 
 const Home_Admin = () => {
-  const api_URL='https://glorious-space-spork-pjwx47757q4936gjw-3001.app.github.dev/'
+  const api_URL=import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
   const [appointments, setAppointments] = useState([]);
@@ -44,17 +44,21 @@ const Home_Admin = () => {
     
     let start_date =year+'-'+month+'-'+day;
     end_date=end_year+'-'+end_month+'-'+end_day;
-    let url = api_URL+'admin/appointments_date?start_date='+start_date+'&end_date='+end_date;
-  	
+    let url = api_URL+'stylist/appointments_date?start_date='+start_date+'&end_date='+end_date;
+  	console.log(url);
+
     fetch(url)
     .then((response)=>{
 			if(response.ok==false){
 				throw new Error ('Error al consultar Las Citas');
 			}
-		  return response.json();
+		  console.log(response);
+      return response.json();
 		})
 		.then((data)=>{
-			setAppointments(data.appointments);
+			console.log(data);
+      setAppointments(data.appointments);
+      console.log(appointments);
 		})
 		.catch((error)=>{
 			alert(error)
@@ -123,17 +127,14 @@ const Home_Admin = () => {
 		})
     
 	}
- 
- 
+  
  useEffect(()=>{
     getAppointments();
     getStylistList();
 	},[selectedDate,workList])
 
-
-
   return (
-    <div className="containerStyle">
+    <div className="containerStyle mt-5">
       
       <div className="row text-center" style ={{ height:"50%"}}>
         <div className="col-3 ">
@@ -181,57 +182,15 @@ const Home_Admin = () => {
         <div className="col-3">
             <h2 className="columnTitleStyle">Users</h2>
            <div className="">
-                <button type="button" className="btn boton mx-2" data-bs-toggle="modal" data-bs-target={"#modalCreateUser"}>
+                <Link to="/CreateBarber" type="button" className="btn modalButtonStyle mx-2">
                         New User
-                    </button>
-                    
-                    <div className="modal fade" id={"modalCreateUser"} aria-labelledby="exampleModalLabel" aria-hidden="true">
-                        <div className="modal-dialog modalStyle">
-                            <div className="modal-content ">
-                                <div className="modal-header">
-                                    <h1 className="modal-title fs-5" id="exampleModalLabel">Create User</h1>
-                                    <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                                </div>
-                                <div className="modal-body">
-                                    <div className="input-group mb-3">
-                                        <label htmlFor="user" className="input-group-text">e-mail</label>
-                                        <input type="text" className="form-control" id="user" onChange={(email) => setEmail(email)}/>
-                                    </div>
-                                    <div className="input-group mb-3">
-                                        <label htmlFor="nombre" className="input-group-text">Stylist</label>
-                                        <input type="text" className="form-control" id="nombre" defaultValue={nombre} readOnly={true}/>
-                                    </div>
-                                    <div className="input-group mb-3">
-                                        <label htmlFor="telefono" className="input-group-text">Date</label>
-                                        <input type="text" className="form-control" id="telefono" defaultValue={telefono} readOnly={true}/>
-                                    </div>
-                                    <div className="input-group mb-3">
-                                        <label htmlFor="status" className="input-group-text">Status</label>
-                                        <select className="form-select" id="inputGroupSelect01" >
-                                            <option defaultValue={role}></option>
-                                            <option value="Adminstrador">Pendiente</option>
-                                            <option value="2">Completada</option>
-                                            <option value="3">Cancelada</option>
-                                        </select>
-                                    
-                                    </div>
-                                  <div className="input-group mb-3">
-
-                                  </div>
-                                           
-                                </div>
-                                <div className="modal-footer">
-                                    <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                                    <button type="button" className="btn btn-primary" onClick={() => { createUser() }}>Save changes</button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
+                    </Link>
+                  
            </div>
         </div>
         <div className="col-6">
             <h2 className="columnTitleStyle">Stylist List</h2>
-            <div className="row carousel-style">
+            <div className="row">
                 <Carousel_Admin stylists={stylistList} />
             </div>   
         </div> 

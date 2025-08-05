@@ -8,6 +8,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 
 const CreateBarber = () => {
+  const api_URL=import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     name: "",
@@ -15,12 +16,15 @@ const CreateBarber = () => {
     phone: "",
     password: "",
     gender: "",
+    role:"stylist",
     photo: null
   });
+
   const [showModal, setShowModal] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [progress, setProgress] = useState(0);
   const [photoPreview, setPhotoPreview] = useState(null);
+  const [picture, setPicture]= useState();
 
   useEffect(() => {
     if (isSubmitting) {
@@ -50,7 +54,7 @@ const CreateBarber = () => {
   const handlePhotoChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData(prev => ({ ...prev, photo: file }));
+      setPicture(file);
       
       // Create preview
       const reader = new FileReader();
@@ -61,27 +65,60 @@ const CreateBarber = () => {
     }
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    setIsSubmitting(true);
-    setProgress(0);
+function ImageUpload() {
+    console.log (picture)
+    const Data = new FormData();
+    Data.append('file', picture);
+    Data.append('upload_preset', import.meta.env.VITE_CLOUDINARY_PRESET); 
+    Data.append('api_key', import.meta.env.VITE_CLOUDINARY_API_KEY);
+    Data.append('cloud_name', import.meta.env.VITE_CLOUDINARY_CLOUD_NAME);
     
-    try {
-      // Simulación de envío de formulario con foto
-      const formDataToSend = new FormData();
-      for (const key in formData) {
-        if (formData[key] !== null && formData[key] !== "") {
-          formDataToSend.append(key, formData[key]);
-        }
-      }
+    let url = "https://api.cloudinary.com/v1_1/"+import.meta.env.VITE_CLOUDINARY_CLOUD_NAME+"/image/upload";
+    
+    fetch(url,{
+			            method:"POST",
+			            body: formData,
+			          
+		})
+			.then((response)=>{
+				return response.json();
+			})
+			.then((data)=>{
+        console.log(data.secure_url )
+				setFormData(prev => ({ ...prev, photo: data.secure_url }));
+			})
+			.catch(()=>{
+				alert(error)
+			})
 
-      await new Promise(resolve => setTimeout(resolve, 2000));
-      setShowModal(true);
-    } catch (error) {
-      alert("Error: " + error.message);
-    } finally {
-      setIsSubmitting(false);
+    
     }
+
+  const handleSubmit = async (e) => {
+    ImageUpload();
+
+    let url = api_URL + 'register'
+    console.log(url)
+    console.log (formData);
+    let bodyData = formData;
+
+    console.log(bodyData);
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(bodyData),
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch(() => {
+        alert(error)
+      })
+
+
   };
 
   const closeModal = () => {
@@ -115,7 +152,7 @@ const CreateBarber = () => {
             animate={{
               y: [0, 100, 0],
               x: [0, 50, 0],
-              opacity: [0.3, 0.8, 0.3]
+          
             }}
             transition={{
               duration: 10 + Math.random() * 20,
@@ -137,8 +174,7 @@ const CreateBarber = () => {
           position: "relative",
           zIndex: 2
         }}
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
+   
         transition={{ duration: 0.5 }}
       >
         <motion.button
@@ -317,9 +353,7 @@ const CreateBarber = () => {
         {showModal && (
           <motion.div
             style={modalOverlayStyle}
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
+       
           >
             <motion.div
               style={{
@@ -330,9 +364,7 @@ const CreateBarber = () => {
                 maxWidth: "500px",
                 textAlign: "center"
               }}
-              initial={{ scale: 0.8, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              exit={{ scale: 0.8, opacity: 0 }}
+            
               transition={{ type: "spring", damping: 20 }}
             >
               <motion.div
@@ -516,7 +548,7 @@ const modalTextStyle = {
   fontSize: "1.1rem",
   lineHeight: "1.6",
   marginBottom: "1.5rem",
-  opacity: 0.9
+ 
 };
 
 const modalButtonStyle = {

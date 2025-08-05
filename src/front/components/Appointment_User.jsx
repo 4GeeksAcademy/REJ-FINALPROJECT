@@ -11,7 +11,7 @@ const Appointment = ({ appointment, viewAppointment, editAppointment, index }) =
                     <h4>{appointment.date + "  " + appointment.user}</h4>
                 </div>
                 <div className="col-3">
-                    <button type="button" className="btn boton" onClick={() => { viewAppointment(index, appointment.user_objeto) }}>Details</button>
+                    <button type="button" className="btn modalButtonStyle" onClick={() => { viewAppointment(index, appointment.user_objeto) }}>Details</button>
                 </div>
             </div>
         </li>

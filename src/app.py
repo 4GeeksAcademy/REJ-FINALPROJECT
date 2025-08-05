@@ -206,6 +206,7 @@ def get_all_users():
 
 def update_appointment_status(appointment_id):
     current_user_email = get_jwt_identity()
+    
     user = User.query.filter_by(email=current_user_email).first()
 
     if not user or user.role != 'admin':
@@ -332,6 +333,7 @@ def get_profile():
     if not user:
         return jsonify({'msg': 'Usuario no encontrado'}), 404
     return jsonify({
+        'user_id':user.id,
         'email': user.email,
         'nombre': user.nombre,
         'telefono': user.telefono,
