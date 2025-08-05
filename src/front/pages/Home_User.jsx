@@ -10,7 +10,7 @@ import Carousel from "../components/Carousel";
 
 const Home_User = () => {
   const api_URL = import.meta.env.VITE_BACKEND_URL;
-  const navigate = useNavigate();
+  
   const [appointments, setAppointments] = useState([]);
   const [doneAppointments, setDoneAppointments] = useState([]);
   const [user, setUser] = useState([]);
@@ -23,9 +23,13 @@ const Home_User = () => {
   const [Disabled, setDisabled] = useState(false);
   const [stylist, setStylist] = useState(0);
   const [workTypes, setWorkTypes] = useState([]);
+  const [selectedItem1, setSelectedItem1]= useState(0);
+  const [selectedItem2, setSelectedItem2]= useState(0);
+  const [selectedItem3, setSelectedItem3]= useState(0);
 
   let duration = 0;
   let cost = 0;
+  
 
   const starsChange = (event) => {
     setStars(event.target.value);
@@ -34,6 +38,20 @@ const Home_User = () => {
   const commentChange = (event) => {
     setComment(event.target.value);
   };
+
+  const itemChange1 =(Event)=>{
+    setSelectedItem1(Event.target.value);
+  }
+  const itemChange2 =(Event)=>{
+    setSelectedItem2(Event.target.value);
+  }
+  const itemChange3 =(Event)=>{
+    setSelectedItem3(Event.target.value);
+  }
+  
+  const stylistChange =(Event)=>{
+    setStylist(Event.target.value);
+  }
 
   function isDisabled() {
     setDisabled(true);
@@ -202,6 +220,33 @@ const Home_User = () => {
 
   }
 
+  function addAppointment () {
+    let url = api_URL + 'stylist/appointment_items'
+    console.log (user);
+    let bodyData = {
+                  date: selectedDate,
+                  status: 'pendiente',
+                  user_id: user.user_id,
+                  stylist_id: stylist,
+                  items:[selectedItem1,selectedItem2,selectedItem3]
+    };
+
+    console.log(bodyData);
+    fetch(url, {
+      method: "POST",
+      body: JSON.stringify(bodyData),
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then((response) => {
+        return response.json();
+      })
+      .then((data) => {
+        console.log(data);
+      })
+      .catch(() => {
+        alert(error)
+      })
+  }
 
   useEffect(() => {
     getUser();
@@ -323,7 +368,8 @@ const Home_User = () => {
                     </div>
                     <div className="input-group mb-2">
                       <label htmlFor="stylist" className="input-group-text">Stylist</label>
-                      <select className="form-select" id="stylist" >
+                      <select className="form-select" id="stylist" value ={stylist} onChange={stylistChange}>
+                        <option value="0"></option>
                         {stylistList.map((stylist, index, array) => {
                           return (
                             <option value={stylist.id}>{stylist.nombre}</option>
@@ -338,9 +384,11 @@ const Home_User = () => {
 
                     <div className="m-1">
                       <h3 className="modal-title fs-5 my-2" id="exampleModalLabel">Work List</h3>
+                      
                       <div className="input-group mb-2">
-                        <label htmlFor="items" className="input-group-text">Items</label>
-                        <select className="form-select" id="items" >
+                        <label htmlFor="items-1" className="input-group-text">Work 1</label>
+                        <select className="form-select" id="items-1" value={ selectedItem1 } onChange={itemChange1}>
+                          <option value="0"></option>
                           {workTypes.map((work, index, array) => {
                             return (
                               <option value={work.id}>{work.description}</option>
@@ -348,31 +396,41 @@ const Home_User = () => {
                             })
                           }
                         </select>
-                        <button type="button" className="btn boton" onClick={() => addItem()}>Add</button>
-                    </div>
-                    
-
-<ul class="list-group">
-  <li class="list-group-item">An item</li>
-  <li class="list-group-item">A second item</li>
-  <li class="list-group-item">A third item</li>
-  <li class="list-group-item">A fourth item</li>
-  <li class="list-group-item">And a fifth one</li>
-</ul>
-
-
+                      </div>
+                      <div className="input-group mb-2">
+                        <label htmlFor="items-2" className="input-group-text">Work 2</label>
+                        <select className="form-select" id="items-2" value={ selectedItem2 } onChange={itemChange2}>
+                          <option value="0"></option>
+                          {workTypes.map((work, index, array) => {
+                            return (
+                              <option value={work.id}>{work.description}</option>
+                              )
+                            })
+                          }
+                        </select>
+                      </div>
+                      <div className="input-group mb-2">
+                        <label htmlFor="items-3" className="input-group-text">Work 3</label>
+                        <select className="form-select" id="items-3" value={ selectedItem3 } onChange={itemChange3}>
+                          <option value="0"></option>
+                          {workTypes.map((work, index, array) => {
+                            return (
+                              <option value={work.id}>{work.description}</option>
+                              )
+                            })
+                          }
+                        </select>
+                      </div>
 
                     </div>
                   </div>
 
-
-
                   <div className="modal-footer">
                     <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" className="btn btn-primary" disabled={isDisabled}
+                    <button type="button" className="btn btn-primary" disabled={Disabled}
                       onClick={() => {
-                        editAppointment(appointment.id, images, status);
-                        setIsDisabled(true);
+                        addAppointment ();
+                        setDisabled(true);
                       }}
                     >Save changes</button>
                   </div>
