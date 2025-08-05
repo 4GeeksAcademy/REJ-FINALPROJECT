@@ -16,7 +16,7 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_cors import CORS
 
-from flask_cors import CORS
+
 
 # Inicialización de la app
 ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
@@ -190,8 +190,8 @@ def delete_service(service_id):
 @jwt_required()
 
 def get_all_users():
-    current_user_email = get_jwt_identity()
-    user = User.query.filter_by(email=current_user_email).first()
+    user_id = get_jwt_identity()
+    user = User.query.filter_by(id=user_id).first()
 
     if not user or user.role != 'admin':
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -327,9 +327,9 @@ def login():
 #@jwt_required()
 def get_profile():
     #user_id = get_jwt_identity()
-    user_id = "elkin_rondon@hotmail.com"
-    #user = User.query.get(user_id)
-    user = User.query.filter_by(email=user_id).first()
+    user_id = 2
+    user = User.query.get(user_id)
+    user = User.query.filter_by(id=user_id).first()
     if not user:
         return jsonify({'msg': 'Usuario no encontrado'}), 404
     return jsonify({
@@ -485,8 +485,8 @@ def leave_review():
 #@jwt_required()
 def get_pending_appoitments():
     #current_user = get_jwt_identity()
-    current_user = "fonseca.karen28@gmail.com"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -507,8 +507,8 @@ def get_pending_appoitments():
 #@jwt_required()
 def get_done_appointments(userId):
     #current_user = get_jwt_identity()
-    current_user = "fonseca.karen28@gmail.com"
-    stylist = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    stylist = User.query.filter_by(id=current_user).first()
 
     if stylist is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -528,8 +528,8 @@ def get_done_appointments(userId):
 #@jwt_required()
 def get_date_appoitments():
     #current_user = get_jwt_identity()
-    current_user = "fonseca.karen28@gmail.com"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -550,6 +550,34 @@ def get_date_appoitments():
     return jsonify({"msg": "Citas Listadas correctamente",
                    "appointments": appointments_serialized}), 200
 
+# Obtener todos los servicios de una fecha
+
+@app.route('/admin/appointments_date', methods=['GET'])
+#@jwt_required()
+def get_admin_date_appoitments():
+    #current_user = get_jwt_identity()
+    current_user = 3
+    user = User.query.filter_by(id=current_user).first()
+
+    if user is None:
+        return jsonify({"msg": "Acceso no autorizado"}), 403
+
+    start_date = request.args.get('start_date')
+    end_date = request.args.get('end_date')
+
+    appointments=Appointment.query.filter_by(status='pendiente')
+
+    if start_date and end_date:
+        appointments = appointments.filter(Appointment.date.between(start_date, end_date))
+   
+    appointments_serialized=[]
+
+    for appointments_aux in appointments:
+        appointments_serialized.append( appointments_aux.serialize())
+    
+    return jsonify({"msg": "Citas Listadas correctamente",
+                   "appointments": appointments_serialized}), 200
+
 
 #------------Actualizar estado de cita---------------------------------------ok
 
@@ -557,8 +585,8 @@ def get_date_appoitments():
 #@jwt_required()
 def update_stylist_appointment_status(appointment_id):
     #current_user = get_jwt_identity()
-    current_user = "fonseca.karen28@gmail.com"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    user = User.query.filter_by(id=current_user).first()
 
     if user.role == 'stylist':
         return jsonify({"msg": "Acceso no autorizado",
@@ -586,8 +614,8 @@ def update_stylist_appointment_status(appointment_id):
 #@jwt_required()
 def update_stylist_appointment_item():
     #current_user = get_jwt_identity()
-    current_user = "fonseca.karen28@gmail.com"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    user = User.query.filter_by(id=current_user).first()
 
     if user.role == 'stylist':
         return jsonify({"msg": "Acceso no autorizado",
@@ -618,8 +646,8 @@ def update_stylist_appointment_item():
 #@jwt_required()
 def create_appointment_Stylist():
     #current_user = get_jwt_identity()
-    current_user = "fonseca@gmail"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -655,8 +683,8 @@ def create_appointment_Stylist():
 #@jwt_required()
 def create_appointment_item():
     #current_user = get_jwt_identity()
-    current_user = "fonseca@gmail"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -687,8 +715,8 @@ def create_appointment_item():
 #@jwt_required()
 def get_appoitment_detail(appointment_id):
     #current_user = get_jwt_identity()
-    current_user = "fonseca.karen28@gmail.com"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -711,8 +739,8 @@ def get_appoitment_detail(appointment_id):
 #@jwt_required()
 def get_stylistList():
     #current_user = get_jwt_identity()
-    current_user = "fonseca.karen28@gmail.com"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 3
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -734,8 +762,8 @@ def get_stylistList():
 #@jwt_required()
 def get_stylist_info():
     #current_user = get_jwt_identity()
-    current_user = "fonseca@gmail"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -752,8 +780,8 @@ def get_stylist_info():
 #@jwt_required()
 def update_stylist_update_info():
     #current_user = get_jwt_identity()
-    current_user = "fonseca@gmail"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -787,8 +815,8 @@ def update_stylist_update_info():
 #@jwt_required()
 def create_appointment_items():
     #current_user = get_jwt_identity()
-    current_user = "fonseca.karen28@gmail.com"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 2
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -839,8 +867,8 @@ def create_appointment_items():
 #@jwt_required()
 def get_user_pending_appointments():
     #current_user = get_jwt_identity()
-    current_user = "elkin_rondon@hotmail.com"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 1
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403
@@ -858,8 +886,8 @@ def get_user_pending_appointments():
 #@jwt_required()
 def get_user_done_appointments():
     #current_user = get_jwt_identity()
-    current_user = "elkin_rondon@hotmail.com"
-    user = User.query.filter_by(email=current_user).first()
+    current_user = 1
+    user = User.query.filter_by(id=current_user).first()
 
     if user is None:
         return jsonify({"msg": "Acceso no autorizado"}), 403

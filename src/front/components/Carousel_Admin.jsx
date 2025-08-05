@@ -26,15 +26,14 @@ const Carousel_Admin = ({stylists}) => {
                     console.log(item.picture);
                     if (contador_item == 1) {
                         return (
-                           <User_Card user={item} key={item.user_id} index={item.user_id}/>
+                           <div className="carousel-item active" data-bs-interval="10000">
+                                <User_Card user={item} key={item.user_id} index={item.user_id}/>
+                           </div>
                         )
                     } else {
                         return (
                             <div className="carousel-item" data-bs-interval="2000">
-                                <img src={item.picture} className="d-block w-100 img-square rounded-5" alt="..." style={{height:"18rem"}}/>
-                                <div className="carousel-caption d-none d-md-block">
-                                    <h5><b>{item.nombre}</b></h5>
-                                </div>
+                                 <User_Card user={item} key={item.user_id} index={item.user_id}/>
                             </div>
                         )
                     }
