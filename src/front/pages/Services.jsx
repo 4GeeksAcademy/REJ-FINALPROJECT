@@ -5,7 +5,7 @@ import { FaArrowRight, FaTimes, FaClock, FaDollarSign } from "react-icons/fa";
 import Modal from "react-modal";
 import "./Services.css";
 
-// Importar imágenes locales
+// Import local images
 import nail from "../assets/img/nail.jpg";
 import women from "../assets/img/women.jpg";
 import mancut from "../assets/img/mancut.jpg";
@@ -21,7 +21,7 @@ const Services = () => {
 
   const services = [
     {
-       id: 1,
+      id: 1,
       image: nail,
       title: "Premium Nail Art",
       description: "Manicure, pedicure and nail design with the best products on the market.",
@@ -229,12 +229,12 @@ const Services = () => {
         </div>
       </motion.div>
 
-      {/* Modal de servicio */}
+      {/* Service Modal */}
       <Modal
         isOpen={!!selectedService}
         onRequestClose={() => setSelectedService(null)}
         style={modalStyles}
-        contentLabel="Detalles del Servicio"
+        contentLabel="Service Details"
       >
         {selectedService && (
           <div style={{
@@ -311,7 +311,7 @@ const Services = () => {
                     color: "#5a4a42"
                   }}>
                     <FaClock style={{ fontSize: "1.2rem" }} />
-                    <span style={{ fontWeight: "500" }}>Duración: {selectedService.duration}</span>
+                    <span style={{ fontWeight: "500" }}>Duration: {selectedService.duration}</span>
                   </div>
                   
                   <div style={{
@@ -322,7 +322,7 @@ const Services = () => {
                     color: "#5a4a42"
                   }}>
                     <FaDollarSign style={{ fontSize: "1.2rem" }} />
-                    <span style={{ fontWeight: "500" }}>Precio: {selectedService.price}</span>
+                    <span style={{ fontWeight: "500" }}>Price: {selectedService.price}</span>
                   </div>
                 </div>
                 
@@ -382,7 +382,7 @@ const Services = () => {
   );
 };
 
-// Estilos
+// Styles
 const particlesContainer = {
   position: "absolute",
   top: 0,

@@ -7,6 +7,7 @@ from flask_migrate import Migrate
 from flask_swagger import swagger
 from flask_jwt_extended import jwt_required, get_jwt_identity, JWTManager
 from flask_bcrypt import Bcrypt
+from flask_mail import Mail, Message
 from datetime import timedelta, datetime
 from sqlalchemy import func
 from api.utils import APIException, generate_sitemap
@@ -36,6 +37,15 @@ if db_url is not None:
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 
+#Configuracion de Flask-Mail
+app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
+app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
+app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True') == 'True'
+app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
+app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
+app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
+    
+
 # Inicializar extensiones
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
@@ -43,6 +53,7 @@ setup_admin(app)
 setup_commands(app)
 jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
+mail = Mail(app)
 
 # Errores
 @app.errorhandler(APIException)
@@ -132,7 +143,7 @@ def create_service():
     db.session.add(new_service)
     db.session.commit()
     return jsonify({"msg": "Servicio creado correctamente"}), 201
-
+       
 @app.route('/admin/services/<int:service_id>', methods=['PUT'])
 @jwt_required()
 def update_service(service_id):
@@ -860,32 +871,57 @@ def get_user_done_appointments():
     return jsonify({"msg": "Citas Listadas correctamente",
                    "appointments": appointments_serialized}), 200
 
+from datetime import timedelta
+from flask_jwt_extended import create_access_token, get_jwt_identity, jwt_required
 
-@app.route('/admin/appointments_date', methods=['GET'])
-#@jwt_required()
-def get_all_date_appoitments():
-    #current_user = get_jwt_identity()
-    current_user = "fonseca.karen28@gmail.com"
-    user = User.query.filter_by(email=current_user).first()
 
-    if user is None:
-        return jsonify({"msg": "Acceso no autorizado"}), 403
+#Solicitar recuperación de contraseña
+@app.route('/forgot-password', methods=['POST'])
+def forgot_password():
+    email = request.json.get('email')
+    if not email:
+        return jsonify({'msg': 'Email requerido'}), 400
 
-    start_date = request.args.get('start_date')
-    end_date = request.args.get('end_date')
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
 
-    appointments=Appointment.query.filter_by(status='pendiente')
+    reset_token = create_access_token(identity=user.id, expires_delta=timedelta(days=30))
+    print("Token generado", reset_token)
+    reset_link = f"{os.getenv('VITE_FRONTEND_URL')}reset-password/{reset_token}"
 
-    if start_date and end_date:
-        appointments = appointments.filter(Appointment.date.between(start_date, end_date))
-   
-    appointments_serialized=[]
+    msg = Message('Recuperación de contraseña - Beauty Center', recipients=[email])
+    msg.html = f"""
+        <h3>Hola {user.nombre},</h3>
+        <p>Has solicitado restablecer tu contraseña.</p>
+        <p>Da clic en el siguiente enlace para cambiarla (válido 15 minutos):</p>
+        <a href="{reset_link}">{reset_link}</a>
+        <br><br>
+        <p>Si no solicitaste esto, ignora este mensaje.</p>
+        <p><strong>Beauty Center</strong></p>
+    """
+    mail.send(msg)
 
-    for appointments_aux in appointments:
-        appointments_serialized.append( appointments_aux.serialize())
-    
-    return jsonify({"msg": "Citas Listadas correctamente",
-                   "appointments": appointments_serialized}), 200
+    return jsonify({'msg': 'Correo de recuperación enviado'}), 200
+
+
+#Cambiar contraseña usando token
+@app.route('/reset-password', methods=['POST'])
+@jwt_required()
+def reset_password():
+    new_password = request.json.get('password')
+    if not new_password:
+        return jsonify({'msg': 'Contraseña requerida'}), 400
+
+    user_id = get_jwt_identity()
+    user = User.query.get(user_id)
+    if not user:
+        return jsonify({'msg': 'Usuario no encontrado'}), 404
+
+    user.Password = bcrypt.generate_password_hash(new_password).decode('utf-8')
+    db.session.commit()
+
+    return jsonify({'msg': 'Contraseña actualizada correctamente'}), 200
 
 
 
