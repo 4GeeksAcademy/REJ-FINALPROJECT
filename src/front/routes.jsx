@@ -15,6 +15,7 @@ import  Home_Stylist  from "./pages/Home_Stylist";
 import  Home_User  from "./pages/Home_User";
 import ContactUs from "./pages/ContactUs";
 import Appointment  from "./pages/Appointment";
+import CreateBarber from "./pages/CreateBarber";
 
 
 
@@ -42,6 +43,7 @@ export const router = createBrowserRouter(
         <Route path="/gallery" element={<Gallery />} /> 
         <Route path="/contact" element={<ContactUs />} /> {/* Contact Us page */}
         <Route path="/appointment" element={<Appointment />} /> {/* Appointment page */}
+        <Route path="/CreateBarber" element={<CreateBarber/>} /> {/* Placeholder for Create Barber page */}
 
   
 
