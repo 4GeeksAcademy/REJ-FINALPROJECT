@@ -39,7 +39,7 @@ export const Footer = () => {
           <address style={addressStyle}>
             <p>Calle Central 123, Tu Pueblo</p>
             <p>+34 123 456 789</p>
-            <p><a href="mailto:hola@beautysalon.com" style={emailLinkStyle}>hola@beautysalon.com</a></p>
+            <p><a href="beautycenter.rejfp@gmail.com" style={emailLinkStyle}>beautycenter.rejfp@gmail.com</a></p>
           </address>
         </div>
         <div style={columnStyle}>
