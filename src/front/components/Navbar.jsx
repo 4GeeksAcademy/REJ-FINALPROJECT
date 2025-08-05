@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaUser, FaChevronDown, FaTimes, FaBars, FaSignInAlt, FaUserPlus } from "react-icons/fa";
+import { FaUser, FaChevronDown, FaTimes, FaBars, FaSignInAlt, FaUserPlus, FaCalendarAlt, FaHeadset, FaSignOutAlt } from "react-icons/fa";
 import { useAuth } from './AuthContext';
 import logo from "../assets/img/logo1.jpg";
+
 
 const Navbar = () => {
   const { isLoggedIn, login, logout } = useAuth();
@@ -29,15 +30,36 @@ const Navbar = () => {
     setDropdownOpen(false);
   }, [location]);
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    try {
-      await login(email, password); // Asegúrate que tu AuthContext acepte estos parámetros
+const handleLogin = async (e) => {
+  e.preventDefault();
+
+  try {
+    const result = await login(email, password);
+
+    if (result.success) {
+      alert("✅ Login exitoso!");
       setDropdownOpen(false);
-    } catch (error) {
-      alert("Error al iniciar sesión: " + error.message);
+
+      // Redirección según rol
+      switch (result.role) {
+        case "admin":
+          navigate("/home-admin");
+          break;
+        case "stylist":
+          navigate("/home-stylist");
+          break;
+        default:
+          navigate("/home-user");
+      }
+    } else {
+      alert("❌ Credenciales incorrectas, intenta de nuevo");
     }
-  };
+  } catch (error) {
+    console.error("Error en login:", error);
+    alert("Error de conexión. Intenta nuevamente.");
+  }
+};
+
 
   const glassStyle = {
     background: scrolled ? "rgba(167, 112, 108, 0.9)" : "rgba(167, 112, 108, 0.7)",

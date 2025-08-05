@@ -2,10 +2,11 @@
 This module takes care of starting the API Server, Loading the DB and Adding the endpoints
 """
 import os
+from urllib.parse import urlparse
 from flask import Flask, request, jsonify, url_for, send_from_directory
 from flask_migrate import Migrate
 from flask_swagger import swagger
-from flask_jwt_extended import jwt_required, get_jwt_identity, JWTManager
+from flask_jwt_extended import jwt_required, get_jwt_identity, JWTManager, create_access_token
 from flask_bcrypt import Bcrypt
 from flask_mail import Mail, Message
 from datetime import timedelta, datetime
@@ -16,37 +17,71 @@ from api.admin import setup_admin
 from api.commands import setup_commands
 from flask_cors import CORS
 
-from flask_cors import CORS
+# ===============================
+# CONFIGURACIÓN GENERAL
+# ===============================
+ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
 
 # Inicialización de la app
-ENV = "development" if os.getenv("FLASK_DEBUG") == "1" else "production"
-static_file_dir = os.path.join(os.path.dirname(os.path.realpath(__file__)), '../dist/')
 app = Flask(__name__)
-app.url_map.strict_slashes = False
-CORS(app)
 
-# Configuración
+# Ruta a los archivos estáticos del front (React)
+static_file_dir = os.path.join(
+    os.path.dirname(os.path.realpath(__file__)),
+    '../dist'
+)
+
+# ===============================
+# CONFIGURACIÓN DE CORS
+# ===============================
+# Obtener URL del frontend
+frontend_url = os.getenv("VITE_FRONTEND_URL", "").rstrip("/")
+parsed_origin = f"{urlparse(frontend_url).scheme}://{urlparse(frontend_url).netloc}"
+
+allowed_origins = [parsed_origin]
+
+# En Codespaces permite todos los orígenes dinámicos
+if "app.github.dev" in parsed_origin:
+    allowed_origins.append("*")
+
+print("✅ Frontend permitido para CORS:", allowed_origins)
+
+CORS(app, resources={r"/*": {
+    "origins": allowed_origins,
+    "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    "allow_headers": ["Content-Type", "Authorization"],
+    "supports_credentials": True
+}})
+# ===============================
+# CONFIGURACIÓN JWT
+# ===============================
 app.config['JWT_SECRET_KEY'] = os.getenv('JWT_SECRET_KEY', 'super-secret-key')
 app.config['JWT_ACCESS_TOKEN_EXPIRES'] = timedelta(days=30)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-# Configuración DB
+# ===============================
+# CONFIGURACIÓN DB
+# ===============================
 db_url = os.getenv("DATABASE_URL")
 if db_url is not None:
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace("postgres://", "postgresql://")
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 
-#Configuracion de Flask-Mail
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+# ===============================
+# CONFIGURACIÓN MAIL
+# ===============================
 app.config['MAIL_SERVER'] = os.getenv('MAIL_SERVER', 'smtp.gmail.com')
 app.config['MAIL_PORT'] = int(os.getenv('MAIL_PORT', 587))
 app.config['MAIL_USE_TLS'] = os.getenv('MAIL_USE_TLS', 'True') == 'True'
 app.config['MAIL_USERNAME'] = os.getenv('MAIL_USERNAME')
 app.config['MAIL_PASSWORD'] = os.getenv('MAIL_PASSWORD')
 app.config['MAIL_DEFAULT_SENDER'] = os.getenv('MAIL_USERNAME')
-    
 
-# Inicializar extensiones
+# ===============================
+# INICIALIZACIÓN DE EXTENSIONES
+# ===============================
 MIGRATE = Migrate(app, db, compare_type=True)
 db.init_app(app)
 setup_admin(app)
@@ -55,12 +90,16 @@ jwt = JWTManager(app)
 bcrypt = Bcrypt(app)
 mail = Mail(app)
 
-# Errores
+# ===============================
+# MANEJO DE ERRORES
+# ===============================
 @app.errorhandler(APIException)
 def handle_invalid_usage(error):
     return jsonify(error.to_dict()), error.status_code
 
-# Sitemap
+# ===============================
+# SITEMAP Y FRONTEND
+# ===============================
 @app.route('/')
 def sitemap():
     if ENV == "development":
@@ -74,6 +113,14 @@ def serve_any_other_file(path):
     response = send_from_directory(static_file_dir, path)
     response.cache_control.max_age = 0
     return response
+
+# ===============================
+# MANEJO DE FAVICON
+# ===============================
+@app.route('/favicon.ico')
+def favicon():
+    return '', 204
+
 
 # ------------------- Administrador -------------------
 
@@ -259,68 +306,94 @@ def get_reports():
 
 #1. Registro 
 @app.route('/register', methods=['POST'])
-def register():
-    body = request.get_json()
+def register_user():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
+    nombre = data.get('nombre')
+    role = data.get('role', 'user')  # por defecto user
 
-    if body is None:
-        return jsonify({'msg': 'Debe enviar informacion al body'}), 400
+    # Validaciones
+    if not email:
+        return jsonify({"msg": "El email es obligatorio"}), 400
+    if not password:
+        return jsonify({"msg": "La contraseña es obligatoria"}), 400
+    if not nombre:
+        return jsonify({"msg": "El nombre es obligatorio"}), 400
 
-    if 'email' not in body:
-        return jsonify({'msg': "El campo 'email' es obligatorio"}), 400
-    if 'password' not in body:
-        return jsonify({'msg': "El campo 'password' es obligatorio"}), 400
-    if 'nombre' not in body:
-        return jsonify({'msg': "El campo 'nombre' es obligatorio"}), 400
-    if 'telefono' not in body:
-        return jsonify({'msg': "El campo 'telefono' es obligatorio"}), 400
-    if 'sexo' not in body:
-        return jsonify({'msg': "El campo 'sexo' es obligatorio"}), 400
-    if 'fecha_nacimiento' not in body:
-        return jsonify({'msg': "El campo 'fecha_nacimiento' es obligatorio"}), 400
-    if 'role' not in body:
-        return jsonify({'msg': "El campo 'role' es obligatorio"}), 400
+    # Verificar si ya existe
+    if User.query.filter_by(email=email).first():
+        return jsonify({"msg": "El correo ya está registrado"}), 409
 
-    if User.query.filter_by(email=body['email']).first():
-        return jsonify({'msg': 'El usuario ya existe'}), 409
+    # Encriptar contraseña
+    hashed_password = bcrypt.generate_password_hash(password).decode('utf-8')
 
-    hashed_pw = bcrypt.generate_password_hash(body['password']).decode('utf-8')
+    # Crear nuevo usuario
+    new_user = User(
+        email=email,
+        password=hashed_password,
+        nombre=nombre,
+        role=RoleEnum(role) if role in RoleEnum._value2member_map_ else RoleEnum.user
+    )
 
-    try:
-        user = User(
-            email=body['email'],
-            password=hashed_pw,
-            nombre=body['nombre'],
-            telefono=body['telefono'],
-            sexo=body['sexo'],
-            fecha_nacimiento=datetime.strptime(body['fecha_nacimiento'], "%Y-%m-%d"),
-            role=RoleEnum(body['role']),
-            picture=body.get('picture')
-        )
-        db.session.add(user)
-        db.session.commit()
+    db.session.add(new_user)
+    db.session.commit()
 
-        return jsonify({'msg': 'Usuario registrado correctamente'}), 201
-    except Exception as e:
-        print("Error al registrar usuario:", e)
-        return jsonify({'msg': 'Error al registrar usuario'}), 500
+    # Crear token
+    token = create_access_token(identity=new_user.id)
+
+    # ✅ Convertir RoleEnum a string para evitar error JSON
+    return jsonify({
+        "msg": "Usuario registrado correctamente",
+        "token": token,
+        "user": {
+            "id": new_user.id,
+            "email": new_user.email,
+            "nombre": new_user.nombre,
+            "role": new_user.role.value if new_user.role else None,
+            "picture": new_user.picture
+        }
+    }), 201
+
     
 # 2. Login
 @app.route('/login', methods=['POST'])
-def login():
-    body = request.get_json()
-    if not body:
-        return jsonify({'msg': 'Se requiere un cuerpo JSON'}), 400
-    if 'email' not in body:
-        return jsonify({'msg': 'El campo email es obligatorio'}), 400
-    if 'password' not in body:
-        return jsonify({'msg': 'El campo password es obligatorio'}), 400
+def login_user():
+    data = request.get_json()
+    email = data.get('email')
+    password = data.get('password')
 
-    user = User.query.filter_by(email=body['email']).first()
-    if not user or not bcrypt.check_password_hash(user.password, body['password']):
-        return jsonify({'msg': 'Credenciales incorrectas'}), 401
+    # Validaciones
+    if not email:
+        return jsonify({"msg": "El email es obligatorio"}), 400
+    if not password:
+        return jsonify({"msg": "La contraseña es obligatoria"}), 400
 
+    # Buscar usuario
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        return jsonify({"msg": "Usuario no encontrado"}), 404
+
+    # Validar contraseña
+    if not bcrypt.check_password_hash(user.password, password):
+        return jsonify({"msg": "Contraseña incorrecta"}), 401
+
+    # Crear token
     token = create_access_token(identity=user.id)
-    return jsonify({'token': token}), 200
+
+    # ✅ Convertir RoleEnum a string para evitar el TypeError
+    return jsonify({
+        "token": token,
+        "user": {
+            "id": user.id,
+            "email": user.email,
+            "nombre": user.nombre,
+            "role": user.role.value if user.role else None,
+            "picture": user.picture
+        }
+    }), 200
+
+
 
 # 3. Obtener perfil
 @app.route('/profile', methods=['GET'])

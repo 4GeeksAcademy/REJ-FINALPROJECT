@@ -9,7 +9,7 @@ import Carousel from "../components/Carousel";
 
 
 const Home_User = () => {
-  const api_URL = import.meta.env.VITE_BACKEND_URL;
+  const api_URL = import.meta.env.VITE_BACKEND_URL.replace(/\/$/, "");
   
   const [appointments, setAppointments] = useState([]);
   const [doneAppointments, setDoneAppointments] = useState([]);
@@ -59,7 +59,7 @@ const Home_User = () => {
 
   function getAppointments() {
 
-    let url = api_URL + 'user/pending_appointments';
+    let url = api_URL + '/user/pending_appointments';
 
     fetch(url)
       .then((response) => {
@@ -79,7 +79,7 @@ const Home_User = () => {
 
   function getDoneAppointments() {
 
-    let url = api_URL + 'user/done_appointments';
+    let url = api_URL + '/user/done_appointments';
 
     fetch(url)
       .then((response) => {
@@ -98,7 +98,7 @@ const Home_User = () => {
   }
 
   function getUser() {
-    let url = api_URL + 'profile'
+    let url = api_URL + '/profile'
     fetch(url)
       .then((response) => {
         if (response.ok == false) {
@@ -139,7 +139,7 @@ const Home_User = () => {
   }
 
   function editAppointment() {
-    let url = api_URL + 'profile'
+    let url = api_URL + '/profile'
     fetch(url)
       .then((response) => {
         console.log(response);
@@ -159,7 +159,7 @@ const Home_User = () => {
   }
 
   function rateAppointment(appointment_id) {
-    let url = api_URL + 'review'
+    let url = api_URL + '/review'
     let bodyData = {
       appointment_id: appointment_id,
       review: stars,
@@ -184,7 +184,7 @@ const Home_User = () => {
   }
 
   function getStylistList() {
-    let url = api_URL + 'admin/stylist_list'
+    let url = api_URL + '/admin/stylist_list'
     fetch(url)
       .then((response) => {
         if (response.ok == false) {
@@ -202,7 +202,7 @@ const Home_User = () => {
   }
 
   function getWorTypes() {
-    let url = api_URL + 'catalog'
+    let url = api_URL + '/catalog'
     fetch(url)
       .then((response) => {
         if (response.ok == false) {
@@ -221,7 +221,7 @@ const Home_User = () => {
   }
 
   function addAppointment () {
-    let url = api_URL + 'stylist/appointment_items'
+    let url = api_URL + '/stylist/appointment_items'
     console.log (user);
     let bodyData = {
                   date: selectedDate,

@@ -39,16 +39,16 @@ export const router = createBrowserRouter(
         <Route path="/demo" element={<Demo />} />
 
         <Route path="/services" element={<Services />} /> {/* Folder for Services page */}
-        <Route path="/Home_Stylist" element={<Home_Stylist />} />
-        <Route path="/Home_User" element={<Home_User />} />
         <Route path="/gallery" element={<Gallery />} /> 
         <Route path="/contact" element={<ContactUs />} /> {/* Contact Us page */}
         <Route path="/appointment" element={<Appointment />} /> {/* Appointment page */}
         <Route path="/appointment_User" element={<Appointment_User />} /> {/* Appointment page */}
-        <Route path="/Home_Admin" element={<Home_Admin />} />
         <Route path="/CreateBarber" element={<CreateBarber/>} /> {/* Placeholder for Create Barber page */}
         <Route path="/CrearBarbero" element={<CrearBarbero/>} />
         <Route path="/CrearUsuario" element={<CrearUser/>} />
+        <Route path="/home-admin" element={<Home_Admin />} />
+        <Route path="/home-stylist" element={<Home_Stylist />} />
+        <Route path="/home-user" element={<Home_User />} />
  
       </Route>
     )
