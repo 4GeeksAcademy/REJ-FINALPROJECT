@@ -6,9 +6,9 @@ import User_Card from "../components/User_Card";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import Carousel from "../components/Carousel";
-import { Image } from 'cloudinary-react';
+import { Image } from 'cloudinary-react';                     
 
-const Home_Stylist = () => {
+const Home_Stylist = () => { 
   const api_URL= import.meta.env.VITE_BACKEND_URL;
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(new Date());
@@ -32,12 +32,12 @@ const Home_Stylist = () => {
   function getAppointments(){
     
     let day = selectedDate.getDate();
-    let month = selectedDate.getMonth();
+    let month = selectedDate.getMonth()+1;
     let year = selectedDate.getFullYear();
     let end_date= new Date();
     end_date.setDate(selectedDate.getDate()+1);
     let end_day = end_date.getDate();
-    let end_month = end_date.getMonth();
+    let end_month = end_date.getMonth()+1;
     let end_year = end_date.getFullYear();
     
     let start_date =year+'-'+month+'-'+day;
